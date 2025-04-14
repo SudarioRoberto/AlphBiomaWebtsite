@@ -68,7 +68,7 @@ export const POST: APIRoute = async ({ request }) => {
     const samples = Array.from({ length: sampleCount }, (_, i) => ({
       sample_id: `${projectId}-${String(i + 1).padStart(3, '0')}`,
       project_id: project.id,
-      status: 'Não coletado',
+      status: 'Disponível',
     }));
 
     const { error: sampleError } = await supabase.from('generic_samples').insert(samples);
