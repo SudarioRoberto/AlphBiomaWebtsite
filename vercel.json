@@ -9,10 +9,10 @@
   "outputDirectory": "dist",
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs18"
+      "runtime": "nodejs@18"
     },
     "api/**/*.ts": {
-      "runtime": "nodejs18"
+      "runtime": "nodejs@18"
     }
   }
 }
