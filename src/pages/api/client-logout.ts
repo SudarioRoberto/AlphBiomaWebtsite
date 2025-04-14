@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ cookies }) => {
   return new Response(null, {
     status: 303, // Using 303 for POST-to-GET redirects
     headers: {
-      'Location': '/login'
+      'Location': '/' // Redirect to the homepage
     }
   });
 };
