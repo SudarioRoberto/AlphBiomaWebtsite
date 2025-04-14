@@ -1,0 +1,115 @@
+---
+export const prerender = false;
+
+import Layout from '../../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../../lib/supabase.js';
+
+const { params } = Astro;
+const sampleId = params.id;
+
+// Buscar informações da amostra
+const { data: sample, error } = await supabase
+  .from('generic_samples')
+  .select('*, projects(name, project_id)')
+  .eq('sample_id', sampleId)
+  .single();
+
+if (error) {
+  console.error('Erro ao buscar amostra:', error);
+}
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-3xl mx-auto space-y-8">
+      {sample ? (
+        <div>
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-blue-900">Editar Amostra</h1>
+            <a 
+              href={`/admin/sample/${sample.sample_id}`} 
+              class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800"
+            >
+              Cancelar
+            </a>
+          </div>
+          
+          <div class="bg-blue-50 p-6 rounded-xl mb-8">
+            <h2 class="text-2xl font-bold text-blue-900 mb-2">{sample.sample_id}</h2>
+            <p class="text-blue-600">
+              Projeto: {sample.projects?.name || 'Desconhecido'} 
+              {sample.projects?.project_id && `(${sample.projects.project_id})`}
+            </p>
+          </div>
+          
+          <form method="POST" action="/api/update-sample" class="space-y-6">
+            <input type="hidden" name="sampleId" value={sample.sample_id} />
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">ID do Animal</label>
+              <input
+                type="text"
+                name="animalId"
+                value={sample.animal_id || ''}
+                class="w-full border p-3 rounded"
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Tratamento</label>
+              <input
+                type="text"
+                name="treatment"
+                value={sample.treatment || ''}
+                class="w-full border p-3 rounded"
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Status</label>
+              <select name="status" class="w-full border p-3 rounded">
+                <option value="Disponível" selected={sample.status === 'Disponível'}>Disponível</option>
+                <option value="Coletado" selected={sample.status === 'Coletado'}>Coletado</option>
+                <option value="Em processamento" selected={sample.status === 'Em processamento'}>Em processamento</option>
+                <option value="Analisado" selected={sample.status === 'Analisado'}>Analisado</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Observação</label>
+              <textarea
+                name="observation"
+                rows="4"
+                class="w-full border p-3 rounded"
+              >{sample.observation || ''}</textarea>
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-8">
+              <a 
+                href={`/admin/sample/${sample.sample_id}`}
+                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+              >
+                Cancelar
+              </a>
+              <button 
+                type="submit" 
+                class="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition"
+              >
+                Salvar Alterações
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div class="bg-gray-50 p-8 rounded-xl text-center">
+          <h1 class="text-2xl font-bold text-gray-700 mb-4">Amostra Não Encontrada</h1>
+          <p class="text-gray-500">A amostra que você está procurando não existe ou foi removida.</p>
+          <a href="/admin" class="mt-6 inline-block bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800">
+            Voltar ao Dashboard
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+            

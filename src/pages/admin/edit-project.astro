@@ -1,0 +1,107 @@
+---
+// src/pages/admin/edit-project.astro
+import Layout from '../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../lib/supabase.js';
+
+export const prerender = false;
+
+const { request, url, cookies } = Astro;
+const isAuthenticated = cookies.get('admin_auth')?.value === 'true';
+if (!isAuthenticated) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: '/admin/login' }
+  });
+}
+
+const projectId = new URL(url).searchParams.get('id');
+const { data: project, error } = await supabase.from('projects').select().eq('id', projectId).single();
+
+if (error || !project) {
+  return new Response('Projeto não encontrado', { status: 404 });
+}
+---
+
+<Layout>
+  <nav class="fixed top-0 left-0 w-full bg-blue-900 text-white px-4 py-3 shadow-md flex items-center justify-between z-50">
+    <span class="font-bold text-lg flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      Admin AlphaBioma
+    </span>
+    <div class="space-x-4 text-sm flex items-center">
+      <a href="/admin" class="hover:underline flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m4-8v8" />
+        </svg>
+        Dashboard
+      </a>
+      <a href="/admin/create" class="hover:underline flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Novo Projeto
+      </a>
+      <form method="POST" action="/api/admin-logout" class="inline">
+        <button class="hover:underline text-red-200 flex items-center gap-1" type="submit">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10v1" />
+          </svg>
+          Sair
+        </button>
+      </form>
+    </div>
+  </nav>
+
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-2xl mx-auto">
+      <h1 class="text-3xl font-bold text-blue-900 mb-2">Editar Projeto</h1>
+      {project.description && <p class="text-gray-600 mb-8">{project.description}</p>}
+
+      <form method="POST" action="/api/update-project" class="space-y-6">
+        <input type="hidden" name="id" value={project.id} />
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Nome do Projeto</label>
+          <input
+            type="text"
+            name="name"
+            required
+            value={project.name}
+            class="w-full border p-3 rounded"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Descrição</label>
+          <textarea
+            name="description"
+            rows="4"
+            class="w-full border p-3 rounded"
+          >{project.description ?? ''}</textarea>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">Status do Projeto</label>
+            <select name="status" class="w-full border p-3 rounded">
+              <option selected={project.status === 'Projeto gerado'}>Projeto gerado</option>
+              <option selected={project.status === 'Material enviado'}>Material enviado</option>
+              <option selected={project.status === 'Material entregue'}>Material entregue</option>
+              <option selected={project.status === 'Amostras coletadas'}>Amostras coletadas</option>
+              <option selected={project.status === 'Amostras enviadas'}>Amostras enviadas</option>
+              <option selected={project.status === 'DNA extraído'}>DNA extraído</option>
+              <option selected={project.status === 'DNA amplificado'}>DNA amplificado</option>
+              <option selected={project.status === 'DNA sequenciado'}>DNA sequenciado</option>
+              <option selected={project.status === 'Analisando dados'}>Analisando dados</option>
+              <option selected={project.status === 'Gerando relatório'}>Gerando relatório</option>
+              <option selected={project.status === 'Relatório entregue'}>Relatório entregue</option>
+            </select>
+          </div>
+        <button type="submit" class="bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800">
+          Salvar Alterações
+        </button>
+      </form>
+    </div>
+  </section>
+</Layout>
+

@@ -1,0 +1,127 @@
+---
+export const prerender = false;
+
+import Layout from '../../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../../lib/supabase.js';
+
+const { params } = Astro;
+const sampleId = params.id;
+
+console.log(`Acessando detalhes da amostra: ${sampleId}`);
+
+// Buscar informações da amostra
+const { data: sample, error } = await supabase
+  .from('generic_samples')
+  .select(`
+    *,
+    projects:project_id (
+      id, 
+      name, 
+      project_id
+    )
+  `)
+  .eq('sample_id', sampleId)
+  .maybeSingle();
+
+if (error) {
+  console.error('Erro ao buscar amostra:', error);
+}
+
+console.log('Dados da amostra:', sample);
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-3xl mx-auto space-y-8">
+      {sample ? (
+        <div>
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-blue-900">Detalhes da Amostra</h1>
+            <a 
+              href={sample.project_id ? `/admin/samples/${sample.project_id}` : '/admin'} 
+              class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800"
+            >
+              Voltar
+            </a>
+          </div>
+          
+          <div class="bg-blue-50 p-6 rounded-xl mb-8">
+            <h2 class="text-2xl font-bold text-blue-900 mb-2">{sample.sample_id}</h2>
+            <p class="text-blue-600">
+              Projeto: {sample.projects?.name || 'Desconhecido'} 
+              {sample.projects?.project_id && `(${sample.projects.project_id})`}
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Informações Básicas</h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">ID do Animal</p>
+                  <p class="font-medium">{sample.animal_id || 'Não informado'}</p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Tratamento</p>
+                  <p class="font-medium">{sample.treatment || 'Não informado'}</p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Status</p>
+                  <span class={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                    sample.status === 'Coletado' ? 'bg-green-100 text-green-800' :
+                    sample.status === 'Disponível' ? 'bg-gray-100 text-gray-800' :
+                    'bg-blue-100 text-blue-800'
+                  }`}>
+                    {sample.status || 'Não definido'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Detalhes Adicionais</h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Data de Coleta</p>
+                  <p class="font-medium">
+                    {sample.collection_date 
+                      ? new Date(sample.collection_date).toLocaleString() 
+                      : 'Não coletada'}
+                  </p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Data de Criação</p>
+                  <p class="font-medium">
+                    {sample.created_at 
+                      ? new Date(sample.created_at).toLocaleString() 
+                      : 'Desconhecida'}
+                  </p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Observação</p>
+                  <p class="font-medium whitespace-pre-line">
+                    {sample.observation || 'Nenhuma observação registrada'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="bg-gray-50 p-8 rounded-xl text-center">
+          <h1 class="text-2xl font-bold text-gray-700 mb-4">Amostra Não Encontrada</h1>
+          <p class="text-gray-500">A amostra "{sampleId}" não existe ou foi removida.</p>
+          <a href="/admin" class="mt-6 inline-block bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800">
+            Voltar ao Dashboard
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

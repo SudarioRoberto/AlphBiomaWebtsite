@@ -1,0 +1,104 @@
+---
+import Layout from '../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../lib/supabase.js';
+
+export const prerender = false;
+const { cookies } = Astro;
+const isAuthenticated = cookies.get('admin_auth')?.value === 'true';
+if (!isAuthenticated) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: '/admin/login' }
+  });
+}
+
+// Obter parâmetros de paginação
+const page = parseInt(Astro.url.searchParams.get('page') || '1');
+const limit = 30; // 30 amostras por página
+const offset = (page - 1) * limit;
+
+// Carregar amostras genéricas
+const { data: samples, error, count } = await supabase
+  .from('generic_samples')
+  .select('*', { count: 'exact' })
+  .order('created_at', { ascending: false })
+  .range(offset, offset + limit - 1);
+
+const totalPages = Math.ceil((count || 0) / limit);
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-blue-900">Amostras Genéricas</h1>
+        <a href="/admin/generate-samples" class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800">
+          Gerar Novas Amostras
+        </a>
+      </div>
+      
+      <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+        <p class="text-sm text-gray-700">
+          <strong>Nota:</strong> As amostras abaixo possuem códigos Data Matrix que podem ser impressos e aplicados em tubos de 2ml. 
+          Os códigos são significativamente menores que QR codes e podem ser escaneados pelo aplicativo móvel.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {samples?.map(sample => (
+          <div class="border rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition">
+            <div class="p-4 flex items-center gap-3">
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sample.sample_id)}&size=150x150&format=svg&type=datamatrix`} 
+                alt={`Data Matrix para ${sample.sample_id}`}
+                class="w-20 h-20"
+              />
+              <div>
+                <h3 class="font-semibold">{sample.sample_id}</h3>
+                <p class="text-xs text-gray-500">Criado em: {new Date(sample.created_at).toLocaleDateString()}</p>
+                <p class="text-xs mt-1">
+                  <span class={`px-2 py-1 rounded-full text-xs ${
+                    sample.status === 'Disponível' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {sample.status}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div class="bg-gray-50 border-t p-2 flex justify-between items-center">
+              <a 
+                href={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sample.sample_id)}&size=300x300&format=svg&type=datamatrix&download=1`} 
+                class="text-xs text-blue-600 hover:underline" 
+                download={`${sample.sample_id}-datamatrix.svg`}
+              >
+                Download SVG
+              </a>
+              {!sample.project_id && (
+                <form method="POST" action="/api/delete-generic-sample">
+                  <input type="hidden" name="id" value={sample.id} />
+                  <button type="submit" class="text-xs text-red-600 hover:underline">Excluir</button>
+                </form>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Paginação */}
+      {totalPages > 1 && (
+        <div class="flex justify-center gap-2 mt-8">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+            <a 
+              href={`/admin/generic-samples?page=${pageNum}`}
+              class={`px-3 py-1 rounded ${pageNum === page ? 'bg-blue-900 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+            >
+              {pageNum}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

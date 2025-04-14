@@ -1,0 +1,132 @@
+---
+// src/pages/admin/generate-samples.astro
+import Layout from '../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../lib/supabase.js';
+
+export const prerender = false;
+const { cookies } = Astro;
+const isAuthenticated = cookies.get('admin_auth')?.value === 'true';
+if (!isAuthenticated) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: '/admin/login' }
+  });
+}
+
+// Buscar todos os projetos para o dropdown
+const { data: projects, error } = await supabase
+  .from('projects')
+  .select('id, name, project_id')
+  .order('created_at', { ascending: false });
+
+if (error) {
+  console.error('Erro ao buscar projetos:', error);
+}
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-3xl mx-auto space-y-8">
+      <h1 class="text-3xl font-bold text-blue-900 text-center">Gerar Novas Amostras</h1>
+      
+      <div class="bg-blue-50 p-6 rounded-xl mb-8">
+        <p class="text-blue-800">
+          Use este formulário para gerar novos códigos de amostras no sistema. As amostras geradas estarão disponíveis 
+          para serem associadas a projetos no aplicativo móvel.
+        </p>
+      </div>
+      
+      <form method="POST" action="/api/generate-samples" class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium mb-1">Prefixo do ID (opcional)</label>
+          <input
+            type="text"
+            name="prefix"
+            placeholder="Ex: LAB-"
+            class="w-full border p-3 rounded"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            Um prefixo opcional para identificar as amostras. Será seguido por números sequenciais.
+          </p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium mb-1">Projeto (opcional)</label>
+          <select name="projectId" class="w-full border p-3 rounded">
+            <option value="">-- Sem projeto (amostras disponíveis) --</option>
+            {projects?.map(project => (
+              <option value={project.id}>
+                {project.name} ({project.project_id})
+              </option>
+            ))}
+          </select>
+          <p class="text-sm text-gray-500 mt-1">
+            Se selecionado, as amostras serão automaticamente associadas a este projeto.
+          </p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium mb-1">Quantidade de Amostras</label>
+          <input
+            type="number"
+            name="count"
+            min="1"
+            max="500"
+            value="10"
+            required
+            class="w-full border p-3 rounded"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            Número de amostras a serem geradas (máximo de 500 por vez).
+          </p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium mb-1">Número Inicial</label>
+          <input
+            type="number"
+            name="startNumber"
+            min="1"
+            value="1"
+            required
+            class="w-full border p-3 rounded"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            O número a partir do qual começar a sequência.
+          </p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium mb-1">Dígitos</label>
+          <input
+            type="number"
+            name="digits"
+            min="1"
+            max="10"
+            value="3"
+            required
+            class="w-full border p-3 rounded"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            Quantidade de dígitos para o número (com zeros à esquerda). Ex: 001, 002, etc.
+          </p>
+        </div>
+        
+        <div class="flex justify-between gap-3 pt-4">
+          <a 
+            href="/admin"
+            class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+          >
+            Cancelar
+          </a>
+          <button 
+            type="submit" 
+            class="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition"
+          >
+            Gerar Amostras
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</Layout>

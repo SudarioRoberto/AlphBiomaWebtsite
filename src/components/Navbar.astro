@@ -1,0 +1,110 @@
+---
+// src/components/Navbar.astro
+---
+
+<nav id="main-nav" class="w-full px-6 md:px-20 py-4 fixed top-0 left-0 z-50 backdrop-blur-md bg-black/30 border-b border-white/10 shadow-md transition-all duration-300">
+  <div class="flex justify-between items-center">
+    <a href="#hero" class="text-2x1 font-bold text-white tracking-wide flex items-center gap-3">
+      <img src="/assets/logos/logo.png" alt="AlphaBioma Logo" class="h-20 w-auto" />
+      <div class="flex flex-col leading-tight">
+        <span class="text-xl font-bold text-white">AlphaBioma</span>
+        <span class="text-xs tracking-wide text-blue-200">Dados que guiam, ciência que entrega</span>
+      </div>
+    </a>
+    
+    <!-- Menu para desktop -->
+    <div class="hidden md:flex gap-8">
+      <div class="flex gap-6 text-white items-center">
+        <a href="#services" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Serviços</a>
+        <a href="#benefits" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Benefícios</a>
+        <a href="#about" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Sobre Nós</a>
+        <a href="#team" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Equipe</a>
+        <a href="#insights" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Insights</a>
+      </div>
+      
+      <a 
+        href="#contact" 
+        class="px-4 py-2 bg-gradient-to-r from-blue-700 to-blue-500 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-blue-600/20 transform hover:-translate-y-1 transition-all duration-300"
+      >
+        Fale Conosco
+      </a>
+      
+      <a 
+        href="/login" 
+        class="px-4 py-2 border border-blue-500/30 backdrop-blur-md bg-blue-600/20 text-white text-sm font-medium rounded-lg hover:bg-blue-500/30 transform hover:-translate-y-1 transition-all duration-300"
+      >
+        Portal do Cliente
+      </a>
+    </div>
+    
+    <!-- Botão de menu móvel -->
+    <button id="mobileMenuButton" class="md:hidden text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+  
+  <!-- Menu móvel (oculto por padrão) -->
+  <div id="mobileMenu" class="md:hidden hidden bg-black/90 mt-4 rounded-lg p-4 animate-fade-in">
+    <div class="flex flex-col gap-4">
+      <a href="#services" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Serviços</a>
+      <a href="#benefits" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Benefícios</a>
+      <a href="#about" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Sobre Nós</a>
+      <a href="#team" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Equipe</a>
+      <a href="#insights" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Insights</a>
+      <a href="/login" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Portal do Cliente</a>
+      <a href="#contact" class="text-white hover:text-blue-300 py-2 px-4 bg-gradient-to-r from-blue-700 to-blue-500 rounded-lg text-center mt-2">Fale Conosco</a>
+    </div>
+  </div>
+</nav>
+
+<script>
+// JavaScript para controlar o menu móvel e efeitos de scroll
+document.addEventListener('DOMContentLoaded', () => {
+  const mobileMenuButton = document.getElementById('mobileMenuButton');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const navbar = document.getElementById('main-nav');
+  
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // Fechar o menu quando clicar em um link
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  }
+  
+  // Adicionar classe ao scroll
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+      navbar.classList.add('bg-black/60', 'py-3');
+      navbar.classList.remove('bg-black/30', 'py-4');
+    } else {
+      navbar.classList.add('bg-black/30', 'py-4');
+      navbar.classList.remove('bg-black/60', 'py-3');
+    }
+  });
+});
+</script>
+
+<style>
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+</style>

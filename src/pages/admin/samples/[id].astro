@@ -1,0 +1,136 @@
+---
+export const prerender = false;
+
+import Layout from '../../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../../lib/supabase.js';
+
+const { params } = Astro;
+const projectId = params.id;
+
+console.log(`Acessando amostras do projeto: ${projectId}`);
+
+// Buscar detalhes do projeto
+const { data: project, error: projectError } = await supabase
+  .from('projects')
+  .select('name, project_id, status, sample_count')
+  .eq('id', projectId)
+  .maybeSingle();
+
+if (projectError) {
+  console.error('Erro ao buscar projeto:', projectError);
+}
+
+// Buscar amostras do projeto
+const { data: samples, error: samplesError } = await supabase
+  .from('generic_samples')
+  .select('*')
+  .eq('project_id', projectId);
+
+if (samplesError) {
+  console.error('Erro ao buscar amostras:', samplesError);
+}
+
+console.log(`Projeto: ${project?.name}, Amostras encontradas: ${samples?.length || 0}`);
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-4xl mx-auto space-y-8">
+      {project ? (
+        <>
+          <h1 class="text-3xl font-bold text-blue-900 text-center">
+            Amostras do Projeto: {project.name}
+          </h1>
+          
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <p class="text-lg text-blue-800">
+                Total de amostras: <span class="font-bold">{samples?.length || 0}</span>
+              </p>
+              <p class="text-sm text-gray-600">
+                Status do projeto: <span class="font-medium">{project.status || 'Não definido'}</span>
+              </p>
+              <p class="text-sm text-gray-600">
+                ID do projeto: <span class="font-medium">{project.project_id || 'N/A'}</span>
+              </p>
+            </div>
+            <div class="flex gap-3">
+              <!-- Corrigindo o link para usar o valor real do parâmetro -->
+              <a href={`/api/sync-sample-counts?redirect=/admin/samples/${projectId}`} class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
+                Sincronizar Amostras
+              </a>
+              <a href="/admin" class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800">
+                Voltar ao Dashboard
+              </a>
+            </div>
+          </div>
+
+          {samples && samples.length > 0 ? (
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse">
+                <thead>
+                  <tr class="bg-blue-100">
+                    <th class="border border-gray-300 px-4 py-2 text-left">ID da Amostra</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Animal</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Tratamento</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Status</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Data de Coleta</th>
+                    <th class="border border-gray-300 px-4 py-2 text-center">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {samples.map(sample => (
+                    <tr class="hover:bg-gray-50">
+                      <td class="border border-gray-300 px-4 py-2">{sample.sample_id}</td>
+                      <td class="border border-gray-300 px-4 py-2">{sample.animal_id || '-'}</td>
+                      <td class="border border-gray-300 px-4 py-2">{sample.treatment || '-'}</td>
+                      <td class="border border-gray-300 px-4 py-2">
+                        <span class={`px-2 py-1 rounded-full text-xs font-medium ${
+                          sample.status === 'Coletado' ? 'bg-green-100 text-green-800' :
+                          sample.status === 'Disponível' ? 'bg-gray-100 text-gray-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {sample.status || 'Não definido'}
+                        </span>
+                      </td>
+                      <td class="border border-gray-300 px-4 py-2">
+                        {sample.collection_date ? new Date(sample.collection_date).toLocaleString() : '-'}
+                      </td>
+                      <td class="border border-gray-300 px-4 py-2 text-center">
+                        <div class="flex justify-center gap-2">
+                          <form method="POST" action="/api/delete-sample" class="inline">
+                            <input type="hidden" name="id" value={sample.sample_id} />
+                            <input type="hidden" name="returnPath" value={`/admin/samples/${projectId}`} />
+                            <button type="submit" class="text-red-600 hover:text-red-800">
+                              Remover
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div class="bg-gray-50 p-8 rounded-lg text-center">
+              <p class="text-gray-500 text-lg">Nenhuma amostra cadastrada para este projeto.</p>
+              <p class="text-gray-400 mt-2">As amostras registradas no aplicativo aparecerão aqui.</p>
+              <a href="/admin/generate-samples" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Gerar Novas Amostras
+              </a>
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="bg-gray-50 p-8 rounded-xl text-center">
+          <h1 class="text-2xl font-bold text-gray-700 mb-4">Projeto Não Encontrado</h1>
+          <p class="text-gray-500">O projeto que você está procurando não existe ou foi removido.</p>
+          <a href="/admin" class="mt-6 inline-block bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800">
+            Voltar ao Dashboard
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

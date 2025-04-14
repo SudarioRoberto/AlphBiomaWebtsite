@@ -1,0 +1,74 @@
+---
+export const prerender = false;
+
+import Layout from '../../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../../lib/supabase.js';
+
+const { params } = Astro;
+const id = params.id;
+
+const { data: project, error } = await supabase
+  .from('projects')
+  .select('name, description, status')
+  .eq('id', id)
+  .single();
+
+// Lista de possíveis status para o projeto
+const statusOptions = [
+  'Projeto gerado',
+  'Material enviado',
+  'Material entregue',
+  'Amostras coletadas',
+  'Amostras enviadas',
+  'DNA extraído',
+  'DNA amplificado',
+  'DNA sequenciado',
+  'Analisando dados',
+  'Gerando relatório',
+  'Relatório entregue'
+];
+
+if (error) {
+  console.error(error);
+}
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-2xl mx-auto space-y-6">
+      <h1 class="text-3xl font-bold text-blue-900 text-center">Editar Projeto</h1>
+
+      <form method="POST" action="/api/update-project" class="space-y-4">
+        <input type="hidden" name="id" value={id} />
+
+        <div>
+          <label class="block font-semibold mb-1">Nome do Projeto</label>
+          <input type="text" name="name" required value={project?.name} class="w-full border p-3 rounded" />
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Descrição</label>
+          <textarea name="description" rows="4" class="w-full border p-3 rounded">{project?.description}</textarea>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Status do Projeto</label>
+          <select name="status" class="w-full border p-3 rounded">
+            {statusOptions.map(status => (
+              <option 
+                value={status} 
+                selected={project?.status === status}
+              >
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button class="bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800" type="submit">
+          Salvar Alterações
+        </button>
+      </form>
+    </div>
+  </section>
+</Layout>

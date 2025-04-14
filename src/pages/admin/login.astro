@@ -1,0 +1,402 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const currentYear = new Date().getFullYear();
+---
+
+<Layout>
+  <section class="relative min-h-screen flex flex-col items-center justify-center px-6 md:px-20 bg-gradient-to-br from-blue-950 to-black overflow-hidden">
+    <!-- Background elements -->
+    <div class="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
+      <video autoplay muted loop playsinline class="absolute top-0 left-0 min-w-full min-h-full object-cover">
+        <source src="/video/dna.mp4" type="video/mp4" />
+      </video>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-blue-700 rounded-full filter blur-[150px]"></div>
+      <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 rounded-full filter blur-[150px]"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-md w-full">
+      <!-- Brand logo -->
+      <div class="mb-8 flex justify-center">
+        <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md p-3 pr-5 rounded-full">
+          <img 
+            src="/assets/logos/alphabioma-logo.svg" 
+            alt="AlphaBioma Logo" 
+            class="h-10 w-auto"
+          />
+          <div class="flex flex-col leading-tight">
+            <span class="text-xl font-bold text-white">AlphaBioma</span>
+            <span class="text-xs text-blue-300 tracking-wide">Análise de Microbioma</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Login Card -->
+      <div class="bg-white/10 backdrop-blur-xl p-8 rounded-2xl border border-white/20 shadow-xl relative overflow-hidden">
+        <!-- Decorative elements -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 rounded-full"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-700/10 rounded-full"></div>
+        
+        <!-- Toggle between client and admin login -->
+        <div class="relative z-10 flex bg-white/5 p-1 rounded-lg mb-8">
+          <button
+            id="clientLoginBtn"
+            class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow"
+            type="button"
+          >
+            Cliente
+          </button>
+          <button
+            id="adminLoginBtn"
+            class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 text-white/70 hover:text-white"
+            type="button"
+          >
+            Admin
+          </button>
+        </div>
+        
+        <h1 id="loginTitle" class="relative z-10 text-2xl font-bold text-white mb-6">Acesso ao Portal</h1>
+        
+        <!-- Client Login Form (default visible) -->
+        <form id="clientLoginForm" class="relative z-10 space-y-6">
+          <div>
+            <label for="projectId" class="block text-blue-200 text-sm font-semibold mb-2">
+              ID do Projeto
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="projectId"
+                name="projectId"
+                required
+                class="w-full pl-10 p-3 rounded-xl bg-white/5 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 placeholder-white/50 transition-all"
+                placeholder="Digite o ID do seu projeto"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label for="clientPassword" class="block text-blue-200 text-sm font-semibold">
+                Senha
+              </label>
+              <a href="/reset-password" class="text-blue-300 text-xs hover:text-blue-200 transition-colors">
+                Esqueceu?
+              </a>
+            </div>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <input
+                type="password"
+                id="clientPassword"
+                name="password"
+                required
+                class="w-full pl-10 p-3 rounded-xl bg-white/5 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 placeholder-white/50 transition-all"
+                placeholder="Digite sua senha"
+              />
+            </div>
+          </div>
+          
+          <div id="clientError" class="hidden bg-red-900/20 border border-red-500/30 rounded-lg p-3 text-sm text-red-200"></div>
+          
+          <button
+            type="submit"
+            id="clientSubmitBtn"
+            class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-xl font-medium shadow-lg hover:shadow-blue-500/20 transform hover:-translate-y-1 transition-all duration-300 flex justify-center items-center"
+          >
+            <span>Entrar no Portal</span>
+          </button>
+        </form>
+        
+        <!-- Admin Login Form (hidden by default) -->
+        <form id="adminLoginForm" class="relative z-10 space-y-6 hidden">
+          <div>
+            <label for="email" class="block text-blue-200 text-sm font-semibold mb-2">
+              Email de Administrador
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full pl-10 p-3 rounded-xl bg-white/5 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 placeholder-white/50 transition-all"
+                placeholder="Digite seu email"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label for="adminPassword" class="block text-blue-200 text-sm font-semibold">
+                Senha
+              </label>
+              <a href="/reset-password" class="text-blue-300 text-xs hover:text-blue-200 transition-colors">
+                Esqueceu?
+              </a>
+            </div>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <input
+                type="password"
+                id="adminPassword"
+                name="password"
+                required
+                class="w-full pl-10 p-3 rounded-xl bg-white/5 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 placeholder-white/50 transition-all"
+                placeholder="Digite sua senha"
+              />
+            </div>
+          </div>
+          
+          <div id="adminError" class="hidden bg-red-900/20 border border-red-500/30 rounded-lg p-3 text-sm text-red-200"></div>
+          
+          <button
+            type="submit"
+            id="adminSubmitBtn"
+            class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-xl font-medium shadow-lg hover:shadow-blue-500/20 transform hover:-translate-y-1 transition-all duration-300 flex justify-center items-center"
+          >
+            <span>Acessar Administração</span>
+          </button>
+        </form>
+      </div>
+      
+      <!-- Return to homepage link -->
+      <div class="mt-8 text-center">
+        <a
+          href="/"
+          class="text-blue-300 hover:text-blue-200 transition-colors flex items-center justify-center gap-2 group"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 transform group-hover:-translate-x-1 transition-transform"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span>Voltar para a página inicial</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+// Moving all client-side code into a script tag that runs in the browser
+document.addEventListener('DOMContentLoaded', function() {
+  // Elements
+  const clientLoginBtn = document.getElementById('clientLoginBtn');
+  const adminLoginBtn = document.getElementById('adminLoginBtn');
+  const clientLoginForm = document.getElementById('clientLoginForm');
+  const adminLoginForm = document.getElementById('adminLoginForm');
+  const loginTitle = document.getElementById('loginTitle');
+  const clientSubmitBtn = document.getElementById('clientSubmitBtn');
+  const adminSubmitBtn = document.getElementById('adminSubmitBtn');
+  const clientError = document.getElementById('clientError');
+  const adminError = document.getElementById('adminError');
+  
+  // Toggle between client and admin forms
+  clientLoginBtn.addEventListener('click', function() {
+    // Update button states
+    clientLoginBtn.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-blue-500', 'shadow');
+    clientLoginBtn.classList.remove('text-white/70');
+    adminLoginBtn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-blue-500', 'shadow');
+    adminLoginBtn.classList.add('text-white/70');
+    
+    // Show client form, hide admin form
+    clientLoginForm.classList.remove('hidden');
+    adminLoginForm.classList.add('hidden');
+    
+    // Update title
+    loginTitle.textContent = 'Acesso ao Portal';
+    
+    // Clear errors
+    clientError.classList.add('hidden');
+    adminError.classList.add('hidden');
+  });
+  
+  adminLoginBtn.addEventListener('click', function() {
+    // Update button states
+    adminLoginBtn.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-blue-500', 'shadow');
+    adminLoginBtn.classList.remove('text-white/70');
+    clientLoginBtn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-blue-500', 'shadow');
+    clientLoginBtn.classList.add('text-white/70');
+    
+    // Show admin form, hide client form
+    adminLoginForm.classList.remove('hidden');
+    clientLoginForm.classList.add('hidden');
+    
+    // Update title
+    loginTitle.textContent = 'Acesso Administrativo';
+    
+    // Clear errors
+    clientError.classList.add('hidden');
+    adminError.classList.add('hidden');
+  });
+  
+  // Client login form submission
+  clientLoginForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Show loading state
+    const originalBtnText = clientSubmitBtn.innerHTML;
+    clientSubmitBtn.innerHTML = `
+      <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span>Processando...</span>
+    `;
+    clientSubmitBtn.disabled = true;
+    clientError.classList.add('hidden');
+    
+    try {
+      // Prepare data as JSON
+      const formData = new FormData(clientLoginForm);
+      const data = {
+        projectId: formData.get('projectId'),
+        password: formData.get('password')
+      };
+      
+      // Send request
+      const response = await fetch('/api/client-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+        redirect: 'follow' // Follow redirects
+      });
+      
+      // Handle redirect from server
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        // Redirect to dashboard
+        window.location.href = '/client-dashboard';
+      } else {
+        // Show error message
+        clientError.textContent = result.message || 'Credenciais inválidas. Tente novamente.';
+        clientError.classList.remove('hidden');
+        
+        // Reset button
+        clientSubmitBtn.innerHTML = originalBtnText;
+        clientSubmitBtn.disabled = false;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      clientError.textContent = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
+      clientError.classList.remove('hidden');
+      
+      // Reset button
+      clientSubmitBtn.innerHTML = originalBtnText;
+      clientSubmitBtn.disabled = false;
+    }
+  });
+  
+  // Admin login form submission
+  adminLoginForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Show loading state
+    const originalBtnText = adminSubmitBtn.innerHTML;
+    adminSubmitBtn.innerHTML = `
+      <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span>Processando...</span>
+    `;
+    adminSubmitBtn.disabled = true;
+    adminError.classList.add('hidden');
+    
+    try {
+      // Get form data
+      const formData = new FormData(adminLoginForm);
+      
+      // Prepare data as JSON
+      const data = {
+        email: formData.get('email'),
+        password: formData.get('password')
+      };
+      
+      // Send request
+      const response = await fetch('/api/admin-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+        redirect: 'follow' // Follow redirects
+      });
+      
+      // Handle redirect from server
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+      
+      // If no redirect, try to parse response as JSON
+      try {
+        const result = await response.json();
+        
+        if (response.ok) {
+          // Redirect to admin dashboard if server didn't redirect automatically
+          window.location.href = '/admin';
+        } else {
+          // Show error message
+          adminError.textContent = result.message || 'Credenciais inválidas. Tente novamente.';
+          adminError.classList.remove('hidden');
+          
+          // Reset button
+          adminSubmitBtn.innerHTML = originalBtnText;
+          adminSubmitBtn.disabled = false;
+        }
+      } catch (jsonError) {
+        // If response is not JSON but status is OK, redirect anyway
+        if (response.ok) {
+          window.location.href = '/admin';
+        } else {
+          throw jsonError;
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      adminError.textContent = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
+      adminError.classList.remove('hidden');
+      
+      // Reset button
+      adminSubmitBtn.innerHTML = originalBtnText;
+      adminSubmitBtn.disabled = false;
+    }
+  });
+});
+</script>

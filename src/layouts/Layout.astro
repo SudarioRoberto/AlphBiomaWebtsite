@@ -1,0 +1,35 @@
+---
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Lab Services</title>
+
+    <!-- 🌍 Weglot integration -->
+    <script>
+      const WeglotOptions = {
+        api_key: "wg_e6bed89b31fd7263bf9c70449ec9d42d7"
+      };
+    </script>
+    <script src="https://cdn.weglot.com/weglot.min.js"></script>
+  </head>
+
+  <body class="font-sans text-gray-900 bg-white">
+    <slot />
+
+    <!-- ✅ Botão flutuante do WhatsApp -->
+    <a
+      href="https://wa.me/16126663177?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20a%20AlphaBioma."
+      target="_blank"
+      rel="noopener"
+      aria-label="WhatsApp"
+      class="fixed bottom-5 right-5 z-50 bg-green-500 p-3 rounded-full shadow-lg hover:scale-105 transition"
+    >
+      <img src="/assets/logos/WhatsApp.png" alt="WhatsApp" class="w-6 h-6" />
+    </a>
+  </body>
+</html>

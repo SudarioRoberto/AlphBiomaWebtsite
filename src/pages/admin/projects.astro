@@ -1,0 +1,120 @@
+---
+// src/pages/admin/projects.astro
+import Layout from '../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../lib/supabase.js';
+
+const { data: projects, error: projectsError } = await supabase
+  .from('projects')
+  .select('*')
+  .order('created_at', { ascending: false });
+
+let projectSamples = {};
+
+if (projects) {
+  for (const project of projects) {
+    const { data: samples, error: sampleError } = await supabase
+      .from('samples')
+      .select('*')
+      .eq('project_id', project.id)
+      .order('sample_id');
+
+    projectSamples[project.id] = samples || [];
+  }
+}
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-12">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <h1 class="text-3xl font-bold text-blue-900 text-center">Projetos Cadastrados</h1>
+
+      <!-- Notification for status updates -->
+      <div id="notification" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+        <span class="block sm:inline">Status atualizado com sucesso!</span>
+        <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="document.getElementById('notification').classList.add('hidden')">
+          <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <title>Fechar</title>
+            <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+          </svg>
+        </span>
+      </div>
+
+      {projects?.length > 0 ? (
+        projects.map(project => (
+          <div key={project.id} class="border rounded p-6 shadow-md bg-gray-50">
+            <h2 class="text-2xl font-semibold text-blue-800 mb-1">{project.name}</h2>
+            <p class="text-sm text-gray-500">Criado em {new Date(project.created_at).toLocaleString()}</p>
+
+            <form method="POST" action="/api/update-project" id={`form-${project.id}`}>
+              <input type="hidden" name="id" value={project.id} />
+              <input type="hidden" name="name" value={project.name || ""} />
+              <input type="hidden" name="description" value={project.description || ""} />
+              
+              <div class="mt-4 mb-4">
+                <label class="block text-sm font-medium mb-1 text-gray-700">Status do Projeto</label>
+                <div class="flex gap-2">
+                  <select
+                    name="status"
+                    class="w-full border p-2 rounded"
+                    id={`status-${project.id}`}
+                  >
+                    <option value="Projeto gerado" selected={project.status === 'Projeto gerado' || !project.status}>Projeto gerado</option>
+                    <option value="Material enviado" selected={project.status === 'Material enviado'}>Material enviado</option>
+                    <option value="Material entregue" selected={project.status === 'Material entregue'}>Material entregue</option>
+                    <option value="Amostras coletadas" selected={project.status === 'Amostras coletadas'}>Amostras coletadas</option>
+                    <option value="Amostras enviadas" selected={project.status === 'Amostras enviadas'}>Amostras enviadas</option>
+                    <option value="DNA extraído" selected={project.status === 'DNA extraído'}>DNA extraído</option>
+                    <option value="DNA amplificado" selected={project.status === 'DNA amplificado'}>DNA amplificado</option>
+                    <option value="DNA sequenciado" selected={project.status === 'DNA sequenciado'}>DNA sequenciado</option>
+                    <option value="Analisando dados" selected={project.status === 'Analisando dados'}>Analisando dados</option>
+                    <option value="Gerando relatório" selected={project.status === 'Gerando relatório'}>Gerando relatório</option>
+                    <option value="Relatório entregue" selected={project.status === 'Relatório entregue'}>Relatório entregue</option>
+                  </select>
+                  <button 
+                    type="submit" 
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  >
+                    Atualizar
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <a href={`/admin/edit-project?id=${project.id}`} class="inline-block text-sm text-blue-600 hover:underline mb-3">
+              Editar Projeto
+            </a>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+              {projectSamples[project.id]?.map(sample => (
+                <div key={sample.id} class="border p-3 rounded bg-white text-center shadow-sm">
+                  <p class="font-semibold text-blue-700">{sample.sample_id}</p>
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${sample.sample_id}&size=100x100`} alt={`QR ${sample.sample_id}`} class="mx-auto mt-2" />
+                  <p class="text-xs text-gray-500 mt-1">{sample.status}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      ) : (
+        <p class="text-center text-gray-500">Nenhum projeto encontrado.</p>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Show success notification if returning from form submission
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success')) {
+      const notification = document.getElementById('notification');
+      if (notification) {
+        notification.classList.remove('hidden');
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+          notification.classList.add('hidden');
+        }, 3000);
+      }
+    }
+  });
+</script>

@@ -1,0 +1,49 @@
+---
+import NavbarAdmin from '../components/NavbarAdmin.astro';
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - AlphaBioma</title>
+    <link rel="stylesheet" href="/styles/admin.css" />
+    <style>
+      /* Emergency fallback styles in case admin.css doesn't load */
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f9fafb;
+        margin: 0;
+        padding-top: 60px; /* Account for fixed navbar */
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <NavbarAdmin />
+    <main class="pt-14 pb-10">
+      <slot />
+    </main>
+    
+    <!-- Make sure you have directory structure to store the admin.css file -->
+    <script>
+      // Check if admin.css loaded correctly
+      window.addEventListener('DOMContentLoaded', () => {
+        const styleSheet = [...document.styleSheets].find(sheet => 
+          sheet.href && sheet.href.includes('admin.css')
+        );
+        
+        if (!styleSheet) {
+          console.warn('Admin CSS not loaded, using fallback styles');
+        }
+      });
+    </script>
+  </body>
+</html>
