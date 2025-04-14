@@ -17,16 +17,12 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Dados inválidos', { status: 400 });
   }
 
-  // Gerar Project ID no formato: XX-123 (duas letras - três números)
-  // Extrair as duas primeiras letras do nome do projeto (ou usar AB como padrão)
+  // Gerar um ID de projeto no formato XX-123
   let namePrefix = name.replace(/[^A-Za-z]/g, '').toUpperCase().substring(0, 2);
   if (namePrefix.length < 2) {
-    namePrefix = namePrefix.padEnd(2, 'A'); // Completa com 'A' se necessário
+    namePrefix = namePrefix.padEnd(2, 'A');
   }
-  
-  // Gerar um número aleatório de 3 dígitos
-  const randomNum = Math.floor(Math.random() * 900) + 100; // Entre 100 e 999
-  
+  const randomNum = Math.floor(Math.random() * 900) + 100;
   const projectId = `${namePrefix}-${randomNum}`;
 
   // Gerar senha aleatória se não fornecida
@@ -35,10 +31,10 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // Hash da senha
-  const { hash, salt } = hashPassword(password);
+  const hash = hashPassword(password);
 
   try {
-    // Verificar se o projeto com este ID já existe
+    // Verificar se o projeto já existe
     const { data: existingProject } = await supabase
       .from('projects')
       .select('id')
@@ -46,21 +42,20 @@ export const POST: APIRoute = async ({ request }) => {
       .single();
 
     if (existingProject) {
-      // Se já existe, gerar outro ID
       return new Response('ID de projeto já existe. Tente novamente.', { status: 400 });
     }
 
+    // Importante: Armazenar o hash e o salt da senha
     const { data: project, error: projectError } = await supabase
-      .from('projects')
-      .insert([{ 
-        name, 
-        description, 
-        project_id: projectId,
-        email,
-        password_hash: hash,
-        password_salt: salt,
-        status: 'Projeto gerado'
-      }])
+    .from('projects')
+    .insert([{ 
+      name, 
+      description, 
+      project_id: projectId,
+      email,
+      password_hash: hash, // só o hash
+      status: 'Projeto gerado'
+    }])
       .select()
       .single();
 
@@ -69,24 +64,34 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response('Erro ao criar projeto', { status: 500 });
     }
 
+    // Criar amostras para o projeto
     const samples = Array.from({ length: sampleCount }, (_, i) => ({
       sample_id: `${projectId}-${String(i + 1).padStart(3, '0')}`,
       project_id: project.id,
       status: 'Não coletado',
     }));
 
-    const { error: sampleError } = await supabase.from('samples').insert(samples);
+    const { error: sampleError } = await supabase.from('generic_samples').insert(samples);
     if (sampleError) {
       console.error(sampleError);
       return new Response('Erro ao salvar amostras', { status: 500 });
     }
 
-    // Em produção, você enviaria um email com as credenciais aqui
+    // Em produção, enviar email com as credenciais
     console.log(`Projeto criado com ID: ${projectId} e senha: ${password}`);
 
-    return new Response(null, {
-      status: 303,
-      headers: { Location: '/admin' }
+    // Adicionar a senha no retorno para exibição ao usuário
+    return new Response(JSON.stringify({
+      success: true,
+      projectId,
+      password,
+      message: 'Projeto criado com sucesso'
+    }), {
+      status: 200,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Location': '/admin'
+      }
     });
   } catch (error) {
     console.error('Erro ao criar projeto:', error);

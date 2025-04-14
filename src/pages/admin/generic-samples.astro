@@ -1,3 +1,4 @@
+<!-- src/pages/admin/generic-samples.astro -->
 ---
 import Layout from '../../layouts/LayoutAdmin.astro';
 import { supabase } from '../../lib/supabase.js';
@@ -28,11 +29,14 @@ const totalPages = Math.ceil((count || 0) / limit);
 ---
 
 <Layout>
-  <section class="min-h-screen bg-white text-black px-6 py-28">
+  <section class="min-h-screen bg-white text-black px-6 py-12">
     <div class="max-w-5xl mx-auto space-y-8">
       <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-blue-900">Amostras Genéricas</h1>
-        <a href="/admin/generate-samples" class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800">
+        <h1 class="text-3xl font-bold text-blue-900">Banco de Amostras</h1>
+        <a href="/admin/generate-samples" class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
           Gerar Novas Amostras
         </a>
       </div>

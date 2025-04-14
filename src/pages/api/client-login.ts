@@ -1,6 +1,7 @@
 // src/pages/api/client-login.ts
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase.js';
+import bcrypt from 'bcryptjs';
 
 export const prerender = false;
 
@@ -15,42 +16,39 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    // Buscar o projeto pelo ID (somente o ID interno, que será usado nos cookies)
+    // Buscar o projeto
     const { data: project, error } = await supabase
       .from('projects')
-      .select('id')
+      .select('id, password_hash')
       .eq('project_id', projectId)
       .single();
 
-    if (error || !project) {
+    if (error || !project || !project.password_hash) {
+      console.error('Hash ausente no projeto:', projectId);
       return new Response(
-        JSON.stringify({ success: false, message: 'Projeto não encontrado.' }),
+        JSON.stringify({ success: false, message: 'Projeto não encontrado ou senha não configurada.' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Verificar senha com a stored procedure
-    const { data: isValid, error: passwordError } = await supabase.rpc('verify_project_password', {
-      p_project_id: projectId,
-      p_password: password
-    });
+    // Verificar senha usando bcrypt localmente
+    const isValid = bcrypt.compareSync(password, project.password_hash);
 
-    if (passwordError || !isValid) {
+    if (!isValid) {
+      console.warn('Senha incorreta para o projeto:', projectId);
       return new Response(
         JSON.stringify({ success: false, message: 'Senha incorreta.' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Em src/pages/api/client-login.ts
-    const isProduction = import.meta.env.PROD;
-
+    // ✅ Login autorizado, definir cookies
     cookies.set('client_auth', 'true', {
       path: '/',
       httpOnly: true,
-      secure: isProduction, // Só exige HTTPS em produção
+      secure: true,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24 * 7, // 7 dias
     });
 
     cookies.set('client_project_id', project.id, {
@@ -58,7 +56,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return new Response(
@@ -67,13 +65,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         message: 'Login realizado com sucesso.',
         projectId: project.id
       }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Erro no login:', error);
+    console.error('Erro no login do cliente:', error);
     return new Response(
       JSON.stringify({ success: false, message: 'Erro interno do servidor.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }

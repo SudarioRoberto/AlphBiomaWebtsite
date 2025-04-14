@@ -2,13 +2,13 @@
   "name": "alphabioma",
   "type": "module",
   "version": "1.0.0",
-"scripts": {
-  "dev": "astro dev",
-  "start": "node server.js",
-  "build": "astro build",
-  "preview": "astro preview",
-  "astro": "astro"
-},
+  "scripts": {
+    "dev": "astro dev",
+    "start": "node server.js",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
   "dependencies": {
     "@astrojs/check": "^0.4.0",
     "@astrojs/mdx": "^4.2.4",

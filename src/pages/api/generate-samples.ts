@@ -65,7 +65,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Redirecionar para o admin
     return new Response(null, {
       status: 303,
-      headers: { Location: projectId ? `/admin/samples/${projectId}` : '/admin' }
+      headers: { Location: projectId ? `/admin/samples/${projectId}` : '/admin/generic-samples' }
     });
   } catch (error) {
     console.error('Erro ao gerar amostras:', error);

@@ -19,13 +19,13 @@ const currentYear = new Date().getFullYear();
       <div class="mb-8 flex justify-center">
         <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md p-3 pr-5 rounded-full">
           <img 
-            src="/assets/logos/alphabioma-logo.svg" 
+            src="/assets/logos/logo.png" 
             alt="AlphaBioma Logo" 
             class="h-10 w-auto"
           />
           <div class="flex flex-col leading-tight">
             <span class="text-xl font-bold text-white">AlphaBioma</span>
-            <span class="text-xs text-blue-300 tracking-wide">Análise de Microbioma</span>
+            <span class="text-xs text-blue-300 tracking-wide">Dados que guiam, ciência que entrega</span>
           </div>
         </div>
       </div>
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (response.ok) {
         // Redirect to dashboard
-        window.location.href = '/client-dashboard';
+        window.location.href = '/dashboard/${projectId}';
       } else {
         // Show error message
         clientError.textContent = result.message || 'Credenciais inválidas. Tente novamente.';
