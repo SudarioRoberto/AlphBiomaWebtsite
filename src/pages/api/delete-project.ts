@@ -1,41 +1,69 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase.js';
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const { projectId } = await request.json();
+    const form = await request.formData();
+    const id = form.get('id')?.toString();
 
-    console.log('[DELETE] Requisição recebida para excluir:', projectId);
+    if (!id) return new Response('Project ID ausente', { status: 400 });
 
-    if (!projectId) {
-      console.error('[DELETE] ID do projeto não informado');
-      return new Response(JSON.stringify({
-        success: false,
-        message: 'ID do projeto não informado.'
-      }), { status: 400 });
+    console.log(`Tentando excluir projeto com ID: ${id}`);
+
+    // Primeiro, verificamos se o projeto existe
+    const { data: project, error: projectCheckError } = await supabase
+      .from('projects')
+      .select('id, project_id')
+      .eq('id', id)
+      .single();
+
+    if (projectCheckError) {
+      console.error('Erro ao verificar projeto:', projectCheckError);
+      return new Response(`Erro ao verificar projeto: ${projectCheckError.message}`, { status: 500 });
     }
 
-    const { error } = await supabase
+    if (!project) {
+      return new Response('Projeto não encontrado', { status: 404 });
+    }
+
+    // Excluir amostras relacionadas ao projeto
+    const { error: deleteSamplesError } = await supabase
+      .from('generic_samples')
+      .update({
+        project_id: null,
+        animal_id: null,
+        treatment: null,
+        observation: null,
+        status: 'Disponível',
+        collection_date: null
+      })
+      .eq('project_id', id);
+
+    if (deleteSamplesError) {
+      console.error('Erro ao desassociar amostras do projeto:', deleteSamplesError);
+      return new Response(`Erro ao desassociar amostras: ${deleteSamplesError.message}`, { status: 500 });
+    }
+
+    // Excluir o projeto
+    const { error: deleteProjectError } = await supabase
       .from('projects')
       .delete()
-      .eq('project_id', projectId);
+      .eq('id', id);
 
-    if (error) {
-      console.error('[DELETE] Erro ao excluir no Supabase:', error);
-      return new Response(JSON.stringify({
-        success: false,
-        message: error.message
-      }), { status: 500 });
+    if (deleteProjectError) {
+      console.error('Erro ao excluir projeto:', deleteProjectError);
+      return new Response(`Erro ao excluir projeto: ${deleteProjectError.message}`, { status: 500 });
     }
 
-    console.log('[DELETE] Projeto excluído com sucesso:', projectId);
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-
-  } catch (err) {
-    console.error('[DELETE] Erro inesperado:', err);
-    return new Response(JSON.stringify({
-      success: false,
-      message: 'Erro interno.'
-    }), { status: 500 });
+    console.log(`Projeto ${id} excluído com sucesso`);
+    return new Response(null, {
+      status: 303,
+      headers: { Location: '/admin' }
+    });
+  } catch (error) {
+    console.error('Erro ao processar exclusão do projeto:', error);
+    return new Response(`Erro interno do servidor: ${error.message}`, { status: 500 });
   }
 };

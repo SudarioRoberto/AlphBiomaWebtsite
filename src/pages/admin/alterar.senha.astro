@@ -1,0 +1,144 @@
+---
+// src/pages/admin/alterar.senha.astro
+import Layout from '../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../lib/supabase.js';
+
+export const prerender = false;
+
+const { cookies, url } = Astro;
+const isAuthenticated = cookies.get('admin_auth')?.value === 'true';
+if (!isAuthenticated) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: '/admin/login' }
+  });
+}
+
+const projectId = new URL(url).searchParams.get('id');
+const { data: project, error } = await supabase
+  .from('projects')
+  .select('name, project_id')
+  .eq('id', projectId) // ✅ certo
+  .single();
+
+if (error || !project) {
+  return new Response('Projeto não encontrado', { status: 404 });
+}
+---
+
+<Layout>
+  <nav class="fixed top-0 left-0 w-full bg-blue-900 text-white px-4 py-3 shadow-md flex items-center justify-between z-50">
+    <span class="font-bold text-lg">Admin AlphaBioma</span>
+    <div class="space-x-4 text-sm flex items-center">
+      <a href="/admin" class="hover:underline">Dashboard</a>
+      <a href="/admin/create" class="hover:underline">Novo Projeto</a>
+      <form method="POST" action="/api/admin-logout" class="inline">
+        <button type="submit" class="hover:underline text-red-200">Sair</button>
+      </form>
+    </div>
+  </nav>
+
+  <section class="pt-32 max-w-xl mx-auto px-4">
+    <h1 class="text-2xl font-bold text-blue-900 mb-6">
+      Alterar Senha do Projeto <span class="text-gray-800">{project.project_id}</span>
+    </h1>
+
+    <div id="messageBox" class="hidden mb-4 text-center px-4 py-2 rounded text-sm"></div>
+
+    <form
+    id="passwordForm"
+    data-project-id={project.project_id}
+    class="bg-yellow-50 p-6 rounded-xl shadow space-y-4"
+  >
+  <div>
+    <label for="newPassword" class="block text-sm font-semibold text-gray-700 mb-1">Nova Senha</label>
+    <input
+      id="newPassword"
+      type="password"
+      placeholder="Mínimo 6 caracteres"
+      class="mt-1 p-2 w-full border border-gray-300 rounded"
+      required
+      minlength="6"
+    />
+  </div>
+
+  <div>
+    <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-1">Confirmar Nova Senha</label>
+    <input
+      id="confirmPassword"
+      type="password"
+      placeholder="Confirme a nova senha"
+      class="mt-1 p-2 w-full border border-gray-300 rounded"
+      required
+    />
+  </div>
+
+  <button
+    id="submitBtn"
+    type="submit"
+    class="bg-yellow-700 hover:bg-yellow-800 text-white px-4 py-2 rounded w-full disabled:opacity-50"
+    disabled
+  >
+    Atualizar Senha
+  </button>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('passwordForm');
+    const passwordInput = document.getElementById('newPassword');
+    const confirmInput = document.getElementById('confirmPassword');
+    const submitBtn = document.getElementById('submitBtn');
+    const messageBox = document.getElementById('messageBox');
+
+    function validatePasswords() {
+      const pass = passwordInput.value.trim();
+      const confirm = confirmInput.value.trim();
+      if (pass.length >= 6 && pass === confirm) {
+        submitBtn.disabled = false;
+        messageBox.classList.add('hidden');
+      } else {
+        submitBtn.disabled = true;
+      }
+    }
+
+    passwordInput.addEventListener('input', validatePasswords);
+    confirmInput.addEventListener('input', validatePasswords);
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault(); // <- ESSENCIAL
+
+      const projectId = form.getAttribute('data-project-id');
+      const newPassword = passwordInput.value.trim();
+      const confirmPassword = confirmInput.value.trim();
+
+      if (newPassword !== confirmPassword) {
+        messageBox.textContent = '❌ As senhas não coincidem.';
+        messageBox.className = 'text-red-800 bg-red-100 border border-red-300 rounded px-4 py-2 mb-4';
+        messageBox.classList.remove('hidden');
+        return;
+      }
+
+      const res = await fetch('/api/admin-change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, newPassword })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        messageBox.textContent = `✅ Senha do projeto ${projectId} atualizada com sucesso.`;
+        messageBox.className = 'text-green-800 bg-green-100 border border-green-300 rounded px-4 py-2 mb-4';
+        passwordInput.value = '';
+        confirmInput.value = '';
+        submitBtn.disabled = true;
+      } else {
+        messageBox.textContent = `❌ Erro: ${data.message || 'Erro ao atualizar a senha.'}`;
+        messageBox.className = 'text-red-800 bg-red-100 border border-red-300 rounded px-4 py-2 mb-4';
+      }
+
+      messageBox.classList.remove('hidden');
+    });
+  });
+</script>

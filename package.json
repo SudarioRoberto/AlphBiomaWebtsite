@@ -7,7 +7,8 @@
     "start": "node server.js",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "migrate-passwords": "node scripts/migrar-senhas.js"
   },
   "dependencies": {
     "@astrojs/check": "^0.4.0",
@@ -23,6 +24,7 @@
     "bcryptjs": "^2.4.3",
     "bwip-js": "^4.5.3",
     "crypto-js": "^4.2.0",
+    "dotenv": "^16.5.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.314.0",
     "nodemailer": "^6.9.8",

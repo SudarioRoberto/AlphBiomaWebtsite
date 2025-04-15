@@ -1,105 +1,97 @@
-<!-- src/pages/admin/index.astro -->
 ---
+// src/pages/admin/index.astro
 import Layout from '../../layouts/LayoutAdmin.astro';
 import { supabase } from '../../lib/supabase.js';
 
 export const prerender = false;
 const { cookies, redirect } = Astro;
 
-// Verificar autenticação
 const isAdminAuth = cookies.get('admin_auth')?.value === 'true';
 if (!isAdminAuth) {
-  return redirect('/admin/login');
+  return redirect('/login');
 }
 
-// Buscar projetos e contar amostras
-const { data: projects, error: projectsError } = await supabase
+const { data: projects, error } = await supabase
   .from('projects')
   .select('id, name, description, created_at, project_id, status, sample_count')
   .order('created_at', { ascending: false });
 
-if (projectsError) {
-  console.error('Erro ao buscar projetos:', projectsError);
+if (error) {
+  console.error('Erro ao buscar projetos:', error);
 }
 
-// Contar totais para dashboard
-const projectCount = projects?.length || 0;
-let totalSamples = 0;
-let completedProjects = 0;
+async function fetchSampleCounts(projectId) {
+  const { count } = await supabase
+    .from('generic_samples')
+    .select('*', { count: 'exact', head: true })
+    .eq('project_id', projectId);
+  return count || 0;
+}
 
+const projectsWithSampleCount = [];
 if (projects) {
-  totalSamples = projects.reduce((sum, project) => sum + (project.sample_count || 0), 0);
-  completedProjects = projects.filter(p => p.status === 'Relatório entregue').length;
-}
-
-// Função para formatar status com classes CSS
-function getStatusClass(status) {
-  switch(status) {
-    case 'Relatório entregue': return 'bg-green-100 text-green-800';
-    case 'Material entregue': return 'bg-yellow-100 text-yellow-800';
-    case 'Amostras coletadas': return 'bg-blue-100 text-blue-800';
-    case 'DNA extraído': return 'bg-purple-100 text-purple-800';
-    case 'DNA sequenciado': return 'bg-indigo-100 text-indigo-800';
-    case 'Analisando dados': return 'bg-orange-100 text-orange-800';
-    default: return 'bg-gray-100 text-gray-800';
+  for (const project of projects) {
+    const count = await fetchSampleCounts(project.id);
+    projectsWithSampleCount.push({
+      ...project,
+      sampleCount: count
+    });
   }
 }
 ---
 
 <Layout>
-  <section class="min-h-screen bg-white text-black px-6 py-12">
-    <div class="max-w-6xl mx-auto space-y-8">
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-5xl mx-auto space-y-8">
       <h1 class="text-3xl font-bold text-blue-900 text-center">Dashboard de Projetos</h1>
-      
-      <!-- Cards de estatísticas -->
+
+      <div id="flashMessage" class="hidden p-4 rounded-lg mb-4"></div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div class="bg-blue-50 p-6 rounded-xl shadow">
-          <p class="text-3xl font-bold text-blue-900">{projectCount}</p>
+          <p class="text-xl font-bold text-blue-900">{projectsWithSampleCount.length}</p>
           <p class="text-sm text-blue-600">Projetos Ativos</p>
         </div>
         <div class="bg-green-50 p-6 rounded-xl shadow">
-          <p class="text-3xl font-bold text-green-900">{totalSamples}</p>
+          <p class="text-xl font-bold text-green-900">
+            {projectsWithSampleCount.reduce((sum, project) => sum + project.sampleCount, 0)}
+          </p>
           <p class="text-sm text-green-600">Total de Amostras</p>
         </div>
         <div class="bg-purple-50 p-6 rounded-xl shadow">
-          <p class="text-3xl font-bold text-purple-900">{completedProjects}</p>
+          <p class="text-xl font-bold text-purple-900">
+            {projectsWithSampleCount.filter(p => p.status === 'Relatório entregue').length}
+          </p>
           <p class="text-sm text-purple-600">Projetos Concluídos</p>
         </div>
       </div>
-      
-      <!-- Menu rápido de ações -->
-      <div class="flex flex-wrap gap-4 mb-8">
-        <a href="/admin/create" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+
+      <div class="flex justify-end mb-4">
+        <a 
+          href="/admin/create" 
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
           Novo Projeto
         </a>
-        <a href="/admin/generic-samples" class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-          Banco de Amostras
-        </a>
-        <a href="/api/sync-sample-counts?redirect=/admin" class="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Sincronizar Contagens
-        </a>
       </div>
-      
-      <!-- Lista de projetos -->
-      {projects?.length > 0 ? (
+
+      {projectsWithSampleCount.length > 0 ? (
         <div class="grid grid-cols-1 gap-6">
-          {projects.map(project => (
+          {projectsWithSampleCount.map(project => (
             <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition">
               <div class="p-6 flex flex-col md:flex-row justify-between">
                 <div class="space-y-2">
                   <div class="flex items-center gap-2">
                     <h2 class="text-xl font-semibold text-blue-900">{project.name}</h2>
-                    <span class={`text-xs px-2 py-1 rounded-full font-medium ${getStatusClass(project.status)}`}>
-                      {project.status || 'Projeto gerado'}
+                    <span class={`text-xs px-2 py-1 rounded-full font-medium ${
+                      project.status === 'Relatório entregue' ? 'bg-green-100 text-green-800' :
+                      project.status === 'Material entregue' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {project.status || 'Em processamento'}
                     </span>
                   </div>
                   <p class="text-sm text-gray-600">ID: {project.project_id}</p>
@@ -115,38 +107,33 @@ function getStatusClass(status) {
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                       </svg>
-                      {project.sample_count || 0} amostras
+                      {project.sampleCount} amostras
                     </span>
                   </div>
                 </div>
                 <div class="flex flex-row md:flex-col justify-end gap-3 mt-4 md:mt-0">
-                <button 
-                  class="flex items-center justify-center gap-2 bg-red-100 text-red-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 transition"
-                  onclick={`confirmDelete('${project.project_id}')`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  Excluir Projeto
-                </button>
-                  <a 
-                    href={`/admin/samples/${project.id}/`} 
-                    class="flex items-center justify-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 transition"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
+                  <a href={`/admin/samples/${project.id}/`} class="flex items-center justify-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 transition">
                     Ver Amostras
                   </a>
-                  <a 
-                    href={`/admin/edit/${project.id}/`} 
-                    class="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Editar Projeto
+                  <a href={`/admin/edit-project?id=${project.id}`} class="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+                    Editar
                   </a>
+                  <a href={`/admin/alterar.senha?id=${project.id}`} } class="w-full flex items-center justify-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-200 transition">
+                    Alterar Senha
+                  </a>
+                  <form method="POST" action="/api/delete-project" class="delete-project-form" data-project-name={project.name} data-project-id={project.id}>
+                    <input type="hidden" name="id" value={project.id} />
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-red-100 text-red-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 transition">
+                      Excluir Projeto
+                    </button>
+                  </form>
+                  <div id={`passwordForm-${project.project_id}`} class="hidden mt-4">
+                    <form onsubmit={`return submitPasswordChange(event, '${project.project_id}')`} class="bg-yellow-50 p-4 rounded shadow">
+                      <label class="block mb-2 text-sm font-bold">Nova Senha para {project.project_id}:</label>
+                      <input id={`newPassword-${project.project_id}`} type="password" class="border p-2 w-full mb-4" required />
+                      <button type="submit" class="bg-yellow-700 hover:bg-yellow-800 text-white px-4 py-2 rounded text-sm">Atualizar Senha</button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -162,32 +149,52 @@ function getStatusClass(status) {
       )}
     </div>
   </section>
-  <script>
-    async function confirmDelete(projectId) {
-      if (!confirm("Tem certeza que deseja excluir este projeto?")) return;
-  
-      try {
-        const res = await fetch('/api/delete-project', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ projectId })
-        });
-  
-        const json = await res.json();
-  
-        if (json.success) {
-          alert('Projeto excluído com sucesso.');
-          location.reload();
-        } else {
-          alert('Erro ao excluir: ' + json.message);
-          console.error(json);
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.delete-project-form').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const projectName = this.getAttribute('data-project-name');
+        const projectId = this.getAttribute('data-project-id');
+        if (confirm(`Tem certeza que deseja excluir o projeto "${projectName}"? Esta ação não pode ser desfeita e todas as amostras serão desassociadas.`)) {
+          const flashMessage = document.getElementById('flashMessage');
+          if (flashMessage) {
+            flashMessage.textContent = 'Excluindo projeto...';
+            flashMessage.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            flashMessage.classList.add('bg-blue-100', 'text-blue-800');
+          }
+          this.submit();
         }
-      } catch (e) {
-        alert('Erro inesperado ao excluir.');
-        console.error(e);
-      }
+      });
+    });
+  });
+
+  function togglePasswordForm(projectId) {
+    const form = document.getElementById(`passwordForm-${projectId}`);
+    if (form) {
+      form.classList.toggle('hidden');
     }
-  </script>
-  </Layout>
+  }
+
+  async function submitPasswordChange(e, projectId) {
+    e.preventDefault();
+    const passwordInput = document.getElementById(`newPassword-${projectId}`);
+    if (!passwordInput) return;
+    const newPassword = passwordInput.value;
+    const res = await fetch('/api/admin-change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ projectId, newPassword })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert(`Senha do projeto ${projectId} atualizada com sucesso!`);
+      togglePasswordForm(projectId);
+    } else {
+      alert('Erro: ' + data.message);
+    }
+    return false;
+  }
+</script>

@@ -1,7 +1,7 @@
 // src/pages/api/client-login.ts
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase.js';
-import bcrypt from 'bcryptjs';
+import { verifyPassword } from '../../lib/auth.js';
 
 export const prerender = false;
 
@@ -24,15 +24,15 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .single();
 
     if (error || !project || !project.password_hash) {
-      console.error('Hash ausente no projeto:', projectId);
+      console.error('Erro ao buscar projeto ou hash ausente:', projectId, error);
       return new Response(
         JSON.stringify({ success: false, message: 'Projeto não encontrado ou senha não configurada.' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Verificar senha usando bcrypt localmente
-    const isValid = bcrypt.compareSync(password, project.password_hash);
+    // Verificar senha usando a função verifyPassword
+    const isValid = verifyPassword(password, project.password_hash);
 
     if (!isValid) {
       console.warn('Senha incorreta para o projeto:', projectId);
@@ -42,7 +42,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    // ✅ Login autorizado, definir cookies
+    // Login autorizado, definir cookies
     cookies.set('client_auth', 'true', {
       path: '/',
       httpOnly: true,

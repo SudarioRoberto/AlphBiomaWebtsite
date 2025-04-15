@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
   let password = form.get('password')?.toString().trim();
   const sampleCount = parseInt(form.get('sampleCount')?.toString() || '0');
 
-  if (!name || !email || isNaN(sampleCount) || sampleCount <= 0) {
+  if (!name || !email ) {
     return new Response('Dados inválidos', { status: 400 });
   }
 
@@ -26,12 +26,12 @@ export const POST: APIRoute = async ({ request }) => {
   const projectId = `${namePrefix}-${randomNum}`;
 
   // Gerar senha aleatória se não fornecida
-  if (!password) {
+  if (!password || password === '') {
     password = generateRandomPassword(8);
   }
 
-  // Hash da senha
-  const hash = hashPassword(password);
+  // Hash da senha (agora usando a função corrigida)
+  const hashedPassword = hashPassword(password);
 
   try {
     // Verificar se o projeto já existe
@@ -45,17 +45,17 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response('ID de projeto já existe. Tente novamente.', { status: 400 });
     }
 
-    // Importante: Armazenar o hash e o salt da senha
+    // Inserir o projeto com a senha hasheada
     const { data: project, error: projectError } = await supabase
-    .from('projects')
-    .insert([{ 
-      name, 
-      description, 
-      project_id: projectId,
-      email,
-      password_hash: hash, // só o hash
-      status: 'Projeto gerado'
-    }])
+      .from('projects')
+      .insert([{ 
+        name, 
+        description, 
+        project_id: projectId,
+        email,
+        password_hash: hashedPassword, // Apenas o hash bcrypt (já inclui salt)
+        status: 'Projeto gerado'
+      }])
       .select()
       .single();
 
@@ -77,20 +77,19 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response('Erro ao salvar amostras', { status: 500 });
     }
 
-    // Em produção, enviar email com as credenciais
-    console.log(`Projeto criado com ID: ${projectId} e senha: ${password}`);
+    // Atualizar a contagem de amostras no projeto
+    await supabase
+      .from('projects')
+      .update({ sample_count: sampleCount })
+      .eq('id', project.id);
 
-    // Adicionar a senha no retorno para exibição ao usuário
-    return new Response(JSON.stringify({
-      success: true,
-      projectId,
-      password,
-      message: 'Projeto criado com sucesso'
-    }), {
-      status: 200,
+    // Redirecionar para página de sucesso com as informações
+    const redirectURL = `/admin/create?success=true&projectId=${encodeURIComponent(projectId)}&password=${encodeURIComponent(password)}`;
+    
+    return new Response(null, {
+      status: 303,
       headers: { 
-        'Content-Type': 'application/json',
-        'Location': '/admin'
+        'Location': redirectURL
       }
     });
   } catch (error) {

@@ -1,5 +1,5 @@
-<!-- src/pages/admin/create.astro -->
 ---
+// src/pages/admin/create.astro
 import Layout from '../../layouts/LayoutAdmin.astro';
 
 export const prerender = false;
@@ -12,10 +12,27 @@ if (!isAuthenticated) {
   });
 }
 
-// Verificar se há mensagem de sucesso com senha gerada
-const success = Astro.url.searchParams.get('success');
-const projectId = Astro.url.searchParams.get('projectId');
-const password = Astro.url.searchParams.get('password');
+// Gerar um ID de projeto base para sugestão
+const generateProjectId = () => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const prefix = letters.charAt(Math.floor(Math.random() * letters.length)) + 
+                letters.charAt(Math.floor(Math.random() * letters.length));
+  const number = Math.floor(1000 + Math.random() * 9000);
+  return `${prefix}-${number}`;
+};
+
+// Gerar senha aleatória
+const generatePassword = () => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let password = "";
+  for (let i = 0; i < 10; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+};
+
+const suggestedProjectId = generateProjectId();
+const suggestedPassword = generatePassword();
 ---
 
 <Layout>
@@ -23,53 +40,123 @@ const password = Astro.url.searchParams.get('password');
     <div class="max-w-2xl mx-auto space-y-8">
       <h1 class="text-3xl font-bold text-blue-900 text-center">Criar Novo Projeto</h1>
 
-      <!-- Exibir mensagem de sucesso se aplicável -->
-      {success && projectId && password && (
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-          <strong class="font-bold">Projeto criado com sucesso!</strong>
-          <p class="block sm:inline mt-1">
-            ID do Projeto: <span class="font-mono font-bold">{projectId}</span>
-          </p>
-          <p class="block sm:inline mt-1">
-            Senha: <span class="font-mono font-bold">{password}</span>
-          </p>
-          <p class="text-sm mt-2">
-            ⚠️ Anote ou copie estas informações agora. A senha não será mostrada novamente.
-          </p>
-        </div>
-      )}
-
-      <form method="POST" action="/api/create-project" class="space-y-4">
+      <form id="createProjectForm" method="POST" action="/api/create-project" class="space-y-4">
         <div>
-          <label class="block font-semibold mb-1">Nome do Projeto*</label>
+          <label class="block font-semibold mb-1">Nome do Projeto *</label>
           <input type="text" name="projectName" required class="w-full border p-3 rounded" />
         </div>
-        
         <div>
           <label class="block font-semibold mb-1">Descrição do Projeto</label>
           <textarea name="description" rows="4" class="w-full border p-3 rounded"></textarea>
         </div>
-        
         <div>
-          <label class="block font-semibold mb-1">Email do Cliente*</label>
+          <label class="block font-semibold mb-1">Email do Cliente *</label>
           <input type="email" name="email" required class="w-full border p-3 rounded" />
         </div>
-        
         <div>
           <label class="block font-semibold mb-1">Senha Inicial</label>
-          <input type="text" name="password" class="w-full border p-3 rounded" />
+          <div class="flex">
+            <input 
+              type="text" 
+              id="passwordField" 
+              name="password" 
+              value={suggestedPassword}
+              class="w-full border p-3 rounded-l" 
+            />
+            <button
+              type="button"
+              id="generatePasswordBtn"
+              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-r border-t border-r border-b border-gray-300"
+              title="Gerar nova senha"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
           <p class="text-sm text-gray-500 mt-1">Uma senha será gerada automaticamente se deixada em branco</p>
         </div>
         
-        <div>
-          <label class="block font-semibold mb-1">Número de Amostras*</label>
-          <input type="number" name="sampleCount" required min="1" value="10" class="w-full border p-3 rounded" />
+        <div id="formError" class="hidden bg-red-100 text-red-700 p-3 rounded-lg"></div>
+        
+        <div class="pt-4">
+          <div class="bg-blue-50 p-4 rounded-lg mb-6">
+            <div class="flex">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-sm text-blue-800">
+                Você pode adicionar amostras ao projeto após a criação, através da página de gerenciamento de amostras.
+              </p>
+            </div>
+          </div>
         </div>
         
-        <button type="submit" class="bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800 w-full">
-          Criar Projeto
+        <button 
+          type="submit" 
+          id="submitBtn"
+          class="bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800 w-full"
+        >
+          Salvar e Voltar ao Dashboard
         </button>
       </form>
+      
+      <div class="flex justify-center">
+        <a href="/admin" class="text-blue-600 hover:underline">Voltar para o Dashboard</a>
+      </div>
     </div>
   </section>
 </Layout>
+
+<script>
+  // Funções client-side para melhorar a experiência
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('createProjectForm');
+    const passwordField = document.getElementById('passwordField');
+    const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const formError = document.getElementById('formError');
+    
+    // Função para gerar senha aleatória
+    const generatePassword = () => {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let password = "";
+      for (let i = 0; i < 10; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return password;
+    };
+    
+    // Evento para gerar nova senha
+    if (generatePasswordBtn) {
+      generatePasswordBtn.addEventListener('click', () => {
+        if (passwordField) {
+          passwordField.value = generatePassword();
+        }
+      });
+    }
+    
+    // Validação do formulário
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        // Esconder mensagens de erro anteriores
+        if (formError) {
+          formError.classList.add('hidden');
+        }
+        
+        // Desabilitar botão para evitar cliques duplos
+        if (submitBtn) {
+          const originalText = submitBtn.textContent;
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Processando...';
+          
+          // Re-habilitar após 10 segundos como fallback
+          setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }, 10000);
+        }
+      });
+    }
+  });
+</script>

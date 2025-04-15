@@ -27,7 +27,7 @@ export const GET: APIRoute = async () => {
     const labelWidth = 113; // 4 cm
     const labelHeight = 14; // 0.5 cm
     const margin = 2.83; // 1 mm entre etiquetas
-    const qrSize = 10; // Tamanho do QR code em pontos
+    const qrSize = 12; // Tamanho do QR code em pontos
 
     let x = 40;
     let y = pageSize[1] - 40;

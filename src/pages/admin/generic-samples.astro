@@ -1,4 +1,3 @@
-<!-- src/pages/admin/generic-samples.astro -->
 ---
 import Layout from '../../layouts/LayoutAdmin.astro';
 import { supabase } from '../../lib/supabase.js';
@@ -18,10 +17,14 @@ const page = parseInt(Astro.url.searchParams.get('page') || '1');
 const limit = 30; // 30 amostras por página
 const offset = (page - 1) * limit;
 
+// Verificar se há mensagem de sucesso
+const successMessage = Astro.url.searchParams.get('success');
+
 // Carregar amostras genéricas
 const { data: samples, error, count } = await supabase
   .from('generic_samples')
   .select('*', { count: 'exact' })
+  .is('project_id', null) // Apenas amostras não associadas
   .order('created_at', { ascending: false })
   .range(offset, offset + limit - 1);
 
@@ -29,7 +32,7 @@ const totalPages = Math.ceil((count || 0) / limit);
 ---
 
 <Layout>
-  <section class="min-h-screen bg-white text-black px-6 py-12">
+  <section class="min-h-screen bg-white text-black px-6 py-28">
     <div class="max-w-5xl mx-auto space-y-8">
       <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <h1 class="text-3xl font-bold text-blue-900">Banco de Amostras</h1>
@@ -52,55 +55,128 @@ const totalPages = Math.ceil((count || 0) / limit);
           </a>
         </div>
       </div>      
+      <!-- Mensagem de sucesso (se houver) -->
+      {successMessage && (
+        <div id="successMessage" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded">
+          <p>{decodeURIComponent(successMessage)}</p>
+        </div>
+      )}
       
-      <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+      <div class="bg-gray-100 p-4 rounded-lg shadow-sm mb-6">
         <p class="text-sm text-gray-700">
           <strong>Nota:</strong> As amostras abaixo possuem códigos Data Matrix que podem ser impressos e aplicados em tubos de 2ml. 
           Os códigos são significativamente menores que QR codes e podem ser escaneados pelo aplicativo móvel.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {samples?.map(sample => (
-          <div class="border rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition">
-            <div class="p-4 flex items-center gap-3">
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sample.sample_id)}&size=150x150&format=svg&type=datamatrix`} 
-                alt={`Data Matrix para ${sample.sample_id}`}
-                class="w-20 h-20"
-              />
-              <div>
-                <h3 class="font-semibold">{sample.sample_id}</h3>
-                <p class="text-xs text-gray-500">Criado em: {new Date(sample.created_at).toLocaleDateString()}</p>
-                <p class="text-xs mt-1">
-                  <span class={`px-2 py-1 rounded-full text-xs ${
-                    sample.status === 'Disponível' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {sample.status}
-                  </span>
-                </p>
+      <!-- Formulário para exclusão em massa e ações em lote -->
+      <form id="batchActionForm" method="POST" action="/api/batch-delete-samples" class="mb-4">
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center">
+            <input 
+              type="checkbox" 
+              id="selectAll" 
+              class="mr-2 h-4 w-4"
+            />
+            <label for="selectAll" class="text-sm font-medium">Selecionar todas</label>
+          </div>
+
+          <div class="flex gap-3">
+            
+            <!-- Botão para excluir amostras selecionadas -->
+            <button 
+              type="submit" 
+              id="batchDeleteBtn"
+              disabled
+              class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Excluir Selecionadas (<span id="selectedCount">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {samples?.map(sample => (
+            <div class="border rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition flex flex-col relative">
+              <!-- Checkbox para seleção -->
+              <div class="absolute top-2 left-2 z-10">
+                <input 
+                  type="checkbox" 
+                  name="sampleIds[]" 
+                  value={sample.id} 
+                  class="sample-checkbox h-4 w-4"
+                  data-sample-id={sample.sample_id}
+                />
+              </div>
+
+              <div class="p-4 flex items-center gap-3 flex-grow">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sample.sample_id)}&size=150x150&format=svg&type=datamatrix`} 
+                  alt={`Data Matrix para ${sample.sample_id}`}
+                  class="w-20 h-20 datamatrix-img"
+                  data-sample-id={sample.sample_id}
+                />
+                <div>
+                  <h3 class="font-semibold">{sample.sample_id}</h3>
+                  <p class="text-xs text-gray-500">Criado em: {new Date(sample.created_at).toLocaleDateString()}</p>
+                  <p class="text-xs mt-1">
+                    <span class={`px-2 py-1 rounded-full text-xs ${
+                      sample.status === 'Disponível' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {sample.status}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div class="bg-gray-50 border-t p-2 flex justify-between items-center">
+                <div class="flex gap-2">
+                  <a 
+                    href={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sample.sample_id)}&size=300x300&format=svg&type=datamatrix&download=1`} 
+                    class="text-xs text-blue-600 hover:underline" 
+                    download={`${sample.sample_id}-datamatrix.svg`}
+                  >
+                    Download SVG
+                  </a>
+                  
+                  <button 
+                    type="button"
+                    class="text-xs text-blue-600 hover:underline print-single-btn"
+                    data-sample-id={sample.sample_id}
+                  >
+                    Imprimir
+                  </button>
+                </div>
+                
+                <button
+                  type="button"
+                  class="text-xs text-red-600 hover:underline delete-single-btn"
+                  data-sample-id={sample.id}
+                >
+                  Excluir
+                </button>
               </div>
             </div>
-            <div class="bg-gray-50 border-t p-2 flex justify-between items-center">
-              <a 
-                href={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sample.sample_id)}&size=300x300&format=svg&type=datamatrix&download=1`} 
-                class="text-xs text-blue-600 hover:underline" 
-                download={`${sample.sample_id}-datamatrix.svg`}
-              >
-                Download SVG
-              </a>
-              {!sample.project_id && (
-                <form method="POST" action="/api/delete-generic-sample">
-                  <input type="hidden" name="id" value={sample.id} />
-                  <button type="submit" class="text-xs text-red-600 hover:underline">Excluir</button>
-                </form>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </form>
+
+      {/* Sem amostras */}
+      {(!samples || samples.length === 0) && (
+        <div class="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          </svg>
+          <p class="text-gray-600 mb-4">Nenhuma amostra genérica disponível.</p>
+          <a href="/admin/generate-samples" class="mt-4 inline-block bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800">
+            Gerar Novas Amostras
+          </a>
+        </div>
+      )}
 
       {/* Paginação */}
       {totalPages > 1 && (
@@ -115,6 +191,288 @@ const totalPages = Math.ceil((count || 0) / limit);
           ))}
         </div>
       )}
+
+      {/* Formulário para exclusão individual (usado via JavaScript) */}
+      <form id="singleDeleteForm" method="POST" action="/api/delete-generic-sample" class="hidden">
+        <input type="hidden" id="singleSampleId" name="id" value="" />
+      </form>
+      
+      {/* Área de impressão invisível para etiquetas */}
+      <div id="printArea" class="hidden">
+        <div id="printContent"></div>
+      </div>
     </div>
   </section>
 </Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Variáveis
+    const batchActionForm = document.getElementById('batchActionForm');
+    const singleDeleteForm = document.getElementById('singleDeleteForm');
+    const singleSampleIdInput = document.getElementById('singleSampleId');
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const sampleCheckboxes = document.querySelectorAll('.sample-checkbox');
+    const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+    const printLabelsBtn = document.getElementById('printLabelsBtn');
+    const selectedCountElement = document.getElementById('selectedCount');
+    const selectedPrintCountElement = document.getElementById('selectedPrintCount');
+    const successMessage = document.getElementById('successMessage');
+    const deleteSingleButtons = document.querySelectorAll('.delete-single-btn');
+    const printSingleButtons = document.querySelectorAll('.print-single-btn');
+    const printArea = document.getElementById('printArea');
+    const printContent = document.getElementById('printContent');
+    
+    // Se há mensagem de sucesso, esconder após 3 segundos
+    if (successMessage) {
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Contagem de seleção
+    const updateSelectedCount = () => {
+      const count = document.querySelectorAll('.sample-checkbox:checked').length;
+      if (selectedCountElement) {
+        selectedCountElement.textContent = count.toString();
+      }
+      if (selectedPrintCountElement) {
+        selectedPrintCountElement.textContent = count.toString();
+      }
+      
+      // Habilitar/desabilitar botões de ação em massa
+      if (batchDeleteBtn) {
+        batchDeleteBtn.disabled = count === 0;
+      }
+      if (printLabelsBtn) {
+        printLabelsBtn.disabled = count === 0;
+      }
+    };
+    
+    // Exclusão em massa
+    if (batchActionForm) {
+      batchActionForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const selectedCount = document.querySelectorAll('.sample-checkbox:checked').length;
+        if (selectedCount === 0) {
+          alert('Selecione pelo menos uma amostra para excluir.');
+          return;
+        }
+        
+        const confirmMessage = selectedCount === 1 
+          ? 'Tem certeza que deseja excluir a amostra selecionada?' 
+          : `Tem certeza que deseja excluir as ${selectedCount} amostras selecionadas?`;
+        
+        if (confirm(confirmMessage)) {
+          this.submit();
+        }
+      });
+    }
+    
+    // Seleção individual de amostras
+    sampleCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateSelectedCount);
+    });
+    
+    // Selecionar/desselecionar todas
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        
+        sampleCheckboxes.forEach(checkbox => {
+          checkbox.checked = isChecked;
+        });
+        
+        updateSelectedCount();
+      });
+    }
+    
+    // Exclusão individual
+    deleteSingleButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const sampleId = this.getAttribute('data-sample-id');
+        
+        if (confirm('Tem certeza que deseja excluir esta amostra?')) {
+          if (singleSampleIdInput) {
+            singleSampleIdInput.value = sampleId;
+          }
+          
+          if (singleDeleteForm) {
+            singleDeleteForm.submit();
+          }
+        }
+      });
+    });
+    
+    // Impressão individual
+    printSingleButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const sampleId = this.getAttribute('data-sample-id');
+        printSingleLabel(sampleId);
+      });
+    });
+    
+    // Impressão em massa
+    if (printLabelsBtn) {
+      printLabelsBtn.addEventListener('click', function() {
+        const selectedCheckboxes = document.querySelectorAll('.sample-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+          alert('Selecione pelo menos uma amostra para imprimir.');
+          return;
+        }
+        
+        const sampleIds = Array.from(selectedCheckboxes).map(checkbox => 
+          checkbox.getAttribute('data-sample-id')
+        );
+        
+        printMultipleLabels(sampleIds);
+      });
+    }
+    
+    // Função para imprimir uma única etiqueta
+    function printSingleLabel(sampleId) {
+      if (!printContent || !printArea) return;
+      
+      printContent.innerHTML = '';
+      
+      // Criar layout de etiqueta
+      const labelDiv = document.createElement('div');
+      labelDiv.className = 'label-container';
+      labelDiv.style.cssText = 'padding: 10px; text-align: center; page-break-inside: avoid;';
+      
+      // Obter a imagem do datamatrix
+      const dataMatrixSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sampleId)}&size=300x300&format=svg&type=datamatrix`;
+      
+      // Criar conteúdo da etiqueta
+      labelDiv.innerHTML = `
+        <div style="margin-bottom: 5px; font-size: 12px; font-weight: bold;">${sampleId}</div>
+        <img src="${dataMatrixSrc}" alt="Data Matrix para ${sampleId}" style="width: 100px; height: 100px;">
+      `;
+      
+      printContent.appendChild(labelDiv);
+      
+      // Iniciar impressão
+      window.requestAnimationFrame(() => {
+        window.print();
+      });
+    }
+    
+    // Função para imprimir múltiplas etiquetas
+    function printMultipleLabels(sampleIds) {
+      if (!printContent || !printArea) return;
+      
+      printContent.innerHTML = '';
+      
+      // Criar estilo para página de impressão
+      const style = document.createElement('style');
+      style.textContent = `
+        @media print {
+          @page {
+            size: auto;
+            margin: 10mm;
+          }
+          body {
+            margin: 0;
+            padding: 0;
+          }
+          .print-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5mm;
+          }
+          .label-item {
+            border: 1px dashed #ccc;
+            padding: 8px;
+            text-align: center;
+            page-break-inside: avoid;
+          }
+          .label-text {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-family: Arial, sans-serif;
+          }
+          .label-image {
+            width: 80px;
+            height: 80px;
+          }
+        }
+      `;
+      
+      printContent.appendChild(style);
+      
+      // Criar grid para etiquetas
+      const gridDiv = document.createElement('div');
+      gridDiv.className = 'print-grid';
+      
+      // Adicionar cada etiqueta ao grid
+      sampleIds.forEach(sampleId => {
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'label-item';
+        
+        const dataMatrixSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sampleId)}&size=300x300&format=svg&type=datamatrix`;
+        
+        labelDiv.innerHTML = `
+          <div class="label-text">${sampleId}</div>
+          <img src="${dataMatrixSrc}" alt="Data Matrix para ${sampleId}" class="label-image">
+        `;
+        
+        gridDiv.appendChild(labelDiv);
+      });
+      
+      printContent.appendChild(gridDiv);
+      
+      // Iniciar impressão
+      window.requestAnimationFrame(() => {
+        const originalTitle = document.title;
+        document.title = `Etiquetas AlphaBioma - ${sampleIds.length} amostras`;
+        
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write('<html><head><title>Etiquetas AlphaBioma</title>');
+          printWindow.document.write(style.outerHTML);
+          printWindow.document.write('</head><body>');
+          printWindow.document.write(gridDiv.outerHTML);
+          printWindow.document.write('</body></html>');
+          printWindow.document.close();
+          
+          printWindow.onload = function() {
+            printWindow.print();
+            setTimeout(() => {
+              printWindow.close();
+            }, 500);
+          };
+        } else {
+          alert('Por favor, permita pop-ups para imprimir as etiquetas.');
+          window.print();
+        }
+        
+        document.title = originalTitle;
+      });
+    }
+    
+    // Inicializar contagem
+    updateSelectedCount();
+    
+    // Configurar CSS para impressão
+    const printStyle = document.createElement('style');
+    printStyle.textContent = `
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #printArea, #printArea * {
+          visibility: visible;
+        }
+        #printArea {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+        }
+      }
+    `;
+    document.head.appendChild(printStyle);
+  });
+</script>

@@ -32,17 +32,46 @@ import '../styles/global.css';
       <slot />
     </main>
     
-    <!-- Make sure you have directory structure to store the admin.css file -->
+    <!-- Script para garantir a funcionalidade dos formulários admin -->
     <script>
-      // Check if admin.css loaded correctly
-      window.addEventListener('DOMContentLoaded', () => {
+      // Verificar se os formulários de admin estão funcionando
+      document.addEventListener('DOMContentLoaded', () => {
+        // Verificar se admin.css carregou
         const styleSheet = [...document.styleSheets].find(sheet => 
           sheet.href && sheet.href.includes('admin.css')
         );
         
         if (!styleSheet) {
-          console.warn('Admin CSS not loaded, using fallback styles');
+          console.warn('Admin CSS não carregado, usando estilos de fallback');
         }
+        
+        // Ajustar formulários para garantir funcionamento correto
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+          if (!form.getAttribute('action')) {
+            console.warn('Formulário sem action encontrado, verifique implementação');
+          }
+          
+          form.addEventListener('submit', function(e) {
+            // Verificar se os campos obrigatórios estão preenchidos
+            const requiredInputs = form.querySelectorAll('[required]');
+            let allFilled = true;
+            
+            requiredInputs.forEach(input => {
+              if (!input.value.trim()) {
+                allFilled = false;
+                input.classList.add('border-red-500');
+              } else {
+                input.classList.remove('border-red-500');
+              }
+            });
+            
+            if (!allFilled) {
+              e.preventDefault();
+              alert('Por favor, preencha todos os campos obrigatórios');
+            }
+          });
+        });
       });
     </script>
   </body>
