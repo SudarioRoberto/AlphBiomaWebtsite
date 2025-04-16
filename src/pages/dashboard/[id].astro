@@ -176,135 +176,106 @@ const canAddSamples = ['material entregue', 'amostras coletadas'].includes(norma
                 )}
               </div>
               
-              <!-- Área para adicionar amostras (escondida por padrão) -->
-              <div id="addSamplesArea" class="hidden mb-8 bg-white/5 border border-white/10 rounded-xl p-4">
-                <h4 class="text-lg font-bold text-white mb-4">Adicionar Amostras em Lote</h4>
-                
-                <form id="batchSampleForm">
-                  <input type="hidden" name="project_id" value={projectId} />
-                  
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                      <label class="block text-sm font-medium text-white/70 mb-1">Padrão ID Amostra</label>
-                      <input 
-                        type="text" 
-                        id="sampleIdPattern" 
-                        name="pattern" 
-                        value="SAMPLE-#" 
-                        placeholder="ex: SAMPLE-#" 
-                        class="w-full bg-white/5 border border-white/20 rounded-lg p-2 text-white"
-                      />
-                      <p class="text-xs text-white/50 mt-1">Use # para substituir pelo número</p>
-                    </div>
-                    <div>
-                      <label class="block text-sm font-medium text-white/70 mb-1">Número Inicial</label>
-                      <input 
-                        type="number" 
-                        id="startNumber" 
-                        name="start_number" 
-                        value="1" 
-                        min="1" 
-                        class="w-full bg-white/5 border border-white/20 rounded-lg p-2 text-white"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label class="block text-sm font-medium text-white/70 mb-1">Quantidade</label>
-                      <input 
-                        type="number" 
-                        id="batchCount" 
-                        name="batch_count" 
-                        value="5" 
-                        min="1" 
-                        max="100" 
-                        class="w-full bg-white/5 border border-white/20 rounded-lg p-2 text-white"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div class="bg-white/5 rounded-lg overflow-hidden mb-4">
-                    <table class="w-full">
-                      <thead class="bg-white/10 text-left">
-                        <tr>
-                          <th class="p-3 text-sm font-medium text-white/80">ID Amostra</th>
-                          <th class="p-3 text-sm font-medium text-white/80">ID Animal</th>
-                          <th class="p-3 text-sm font-medium text-white/80">Tratamento</th>
-                          <th class="p-3 text-sm font-medium text-white/80">Observação</th>
-                        </tr>
-                      </thead>
-                      <tbody id="sampleTableBody">
-                        <!-- Rows will be filled by JavaScript -->
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  <div class="flex justify-end gap-3">
-                    <button 
-                      type="button" 
-                      id="cancelAddSamples"
-                      class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg transition"
-                    >
-                      Cancelar
-                    </button>
-                    
-                    <button 
-                      type="submit" 
-                      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      Salvar Amostras
-                    </button>
-                  </div>
-                </form>
-              </div>
-              
-              <!-- Tabela de amostras existentes -->
-              {samples && samples.length > 0 ? (
-                <div class="bg-white/5 rounded-lg overflow-hidden">
-                  <table class="w-full">
-                    <thead class="bg-white/10 text-left">
-                      <tr>
-                        <th class="p-3 text-sm font-medium text-white/80">ID Amostra</th>
-                        <th class="p-3 text-sm font-medium text-white/80">ID Animal</th>
-                        <th class="p-3 text-sm font-medium text-white/80">Tratamento</th>
-                        <th class="p-3 text-sm font-medium text-white/80">Data de Registro</th>
-                        <th class="p-3 text-sm font-medium text-white/80">Observação</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {samples.map(sample => (
-                        <tr class="border-b border-white/5">
-                          <td class="p-3 text-sm">{sample.sample_id}</td>
-                          <td class="p-3 text-sm">{sample.animal_id || '-'}</td>
-                          <td class="p-3 text-sm">{sample.treatment || '-'}</td>
-                          <td class="p-3 text-sm">{new Date(sample.created_at).toLocaleDateString()}</td>
-                          <td class="p-3 text-sm">{sample.observation || '-'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div id="noSamplesArea" class="text-center py-10 bg-white/5 rounded-xl border border-white/10">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                  <p class="text-lg text-white/70">Nenhuma amostra registrada ainda.</p>
-                  {canAddSamples && (
-                    <button 
-                      id="noSamplesAdd"
-                      class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition inline-flex items-center gap-2"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                      </svg>
-                      Adicionar Amostras
-                    </button>
-                  )}
-                </div>
-              )}
+              <!-- Área para adicionar amostras manualmente (estilo Excel) -->
+<div id="addSamplesArea" class="hidden mb-8 bg-white/5 border border-white/10 rounded-xl p-4">
+  <h4 class="text-lg font-bold text-white mb-4">Adicionar Amostras Manualmente</h4>
+
+  <form id="manualSampleForm">
+    <input type="hidden" name="project_id" value={projectId} />
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse">
+        <thead class="bg-white/10 text-left">
+          <tr>
+            <th class="p-3 text-sm text-white/70">ID Amostra</th>
+            <th class="p-3 text-sm text-white/70">ID Animal</th>
+            <th class="p-3 text-sm text-white/70">Tratamento</th>
+            <th class="p-3 text-sm text-white/70">Observação</th>
+            <th class="p-3 text-sm text-white/70">Ação</th>
+          </tr>
+        </thead>
+        <tbody id="editableSampleRows">
+          <!-- Linhas adicionadas via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex justify-between mt-4">
+      <button type="button" id="addRowBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+        + Nova Linha
+      </button>
+
+      <div class="flex gap-3">
+        <button type="button" id="cancelManualSamples" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg">Cancelar</button>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Salvar Amostras</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{samples && samples.length > 0 ? (
+  <>
+  <div class="flex justify-end mb-4 gap-4">
+    <button id="exportExcel" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-white">Exportar Excel</button>
+    <button id="exportPdf" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white">Exportar PDF</button>
+  </div>
+
+  <form id="editSamplesForm">
+    <table class="w-full bg-white/5 rounded-lg overflow-hidden">
+      <thead class="bg-white/10 text-left">
+        <tr>
+          <th class="p-3 text-sm font-medium text-white/80">ID Amostra</th>
+          <th class="p-3 text-sm font-medium text-white/80">ID Animal</th>
+          <th class="p-3 text-sm font-medium text-white/80">Tratamento</th>
+          <th class="p-3 text-sm font-medium text-white/80">Observação</th>
+          <th class="p-3 text-sm font-medium text-white/80">Salvar</th>
+          <th class="p-3 text-sm font-medium text-white/80">Excluir</th>
+        </tr>
+      </thead>
+      <tbody>
+        {samples.map(sample => (
+          <tr class="border-b border-white/10" id={`row-${sample.sample_id}`}>
+            <td class="p-3 text-sm">{sample.sample_id}</td>
+            <td class="p-3">
+              <input type="text" name="animal_id" data-id={sample.sample_id} value={sample.animal_id || ''} class="w-full text-sm bg-white/10 text-white p-1 rounded" />
+            </td>
+            <td class="p-3">
+              <input type="text" name="treatment" data-id={sample.sample_id} value={sample.treatment || ''} class="w-full text-sm bg-white/10 text-white p-1 rounded" />
+            </td>
+            <td class="p-3">
+              <input type="text" name="observation" data-id={sample.sample_id} value={sample.observation || ''} class="w-full text-sm bg-white/10 text-white p-1 rounded" />
+            </td>
+            <td class="p-3 text-center">
+              <button type="button" class="saveSampleBtn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded" data-id={sample.sample_id}>Salvar</button>
+            </td>
+            <td class="p-3 text-center">
+              <button type="button" class="deleteSampleBtn bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded" data-id={sample.sample_id}>Excluir</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </form>
+</>
+) : (
+  <div id="noSamplesArea" class="text-center py-10 bg-white/5 rounded-xl border border-white/10">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+    <p class="text-lg text-white/70">Nenhuma amostra registrada ainda.</p>
+    {canAddSamples && (
+      <button 
+        id="noSamplesAdd"
+        class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition inline-flex items-center gap-2"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Adicionar Amostras
+      </button>
+    )}
+  </div>
+)}
             </div>
           </div>
         </div>
@@ -326,135 +297,169 @@ const canAddSamples = ['material entregue', 'amostras coletadas'].includes(norma
 
 
 <script>
-  // Scripts para adicionar amostras de forma dinâmica
   document.addEventListener('DOMContentLoaded', () => {
-    const addSamplesBtn = document.getElementById('addSamplesBtn');
-    const cancelAddBtn = document.getElementById('cancelAddSamples');
-    const noSamplesAddBtn = document.getElementById('noSamplesAdd');
+    const editableSampleRows = document.getElementById('editableSampleRows');
+    const addRowBtn = document.getElementById('addRowBtn');
+    const cancelManualSamples = document.getElementById('cancelManualSamples');
     const addSamplesArea = document.getElementById('addSamplesArea');
-    const sampleTableBody = document.getElementById('sampleTableBody');
-    const sampleIdPattern = document.getElementById('sampleIdPattern');
-    const startNumber = document.getElementById('startNumber');
-    const batchCount = document.getElementById('batchCount');
-    const batchSampleForm = document.getElementById('batchSampleForm');
-    
-    // Função para mostrar a área de adicionar amostras
-    const showAddSamplesArea = () => {
-      if (addSamplesArea) {
-        addSamplesArea.classList.remove('hidden');
-        generateSampleRows();
-      }
+    const manualSampleForm = document.getElementById('manualSampleForm');
+
+    const createRow = (sampleId = '') => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="p-2">
+          <input name="sample_ids[]" type="text" value="${sampleId}" required class="w-full p-1 text-sm bg-white/5 border border-white/20 rounded text-white" />
+        </td>
+        <td class="p-2">
+          <input name="animal_ids[]" type="text" class="w-full p-1 text-sm bg-white/5 border border-white/20 rounded text-white" />
+        </td>
+        <td class="p-2">
+          <input name="treatments[]" type="text" class="w-full p-1 text-sm bg-white/5 border border-white/20 rounded text-white" />
+        </td>
+        <td class="p-2">
+          <input name="observations[]" type="text" class="w-full p-1 text-sm bg-white/5 border border-white/20 rounded text-white" />
+        </td>
+        <td class="p-2 text-center">
+          <button type="button" class="removeRowBtn text-red-500 text-sm">Remover</button>
+        </td>
+      `;
+      editableSampleRows.appendChild(row);
     };
-    
-    // Função para esconder a área de adicionar amostras
-    const hideAddSamplesArea = () => {
-      if (addSamplesArea) {
+
+    if (addRowBtn) {
+      addRowBtn.addEventListener('click', () => createRow());
+    }
+
+    editableSampleRows.addEventListener('click', (e) => {
+      if (e.target.classList.contains('removeRowBtn')) {
+        const row = e.target.closest('tr');
+        if (row) editableSampleRows.removeChild(row);
+      }
+    });
+
+    if (cancelManualSamples) {
+      cancelManualSamples.addEventListener('click', () => {
         addSamplesArea.classList.add('hidden');
-      }
-    };
-    
-    // Adicionar event listeners
-    if (addSamplesBtn) {
-      addSamplesBtn.addEventListener('click', showAddSamplesArea);
+        editableSampleRows.innerHTML = '';
+      });
     }
-    
-    if (noSamplesAddBtn) {
-      noSamplesAddBtn.addEventListener('click', showAddSamplesArea);
-    }
-    
-    if (cancelAddBtn) {
-      cancelAddBtn.addEventListener('click', hideAddSamplesArea);
-    }
-    
-    // Função para gerar as linhas da tabela de amostras
-    const generateSampleRows = () => {
-      if (!sampleTableBody || !sampleIdPattern || !startNumber || !batchCount) return;
-      
-      const pattern = sampleIdPattern.value || 'SAMPLE-#';
-      const start = parseInt(startNumber.value) || 1;
-      const count = parseInt(batchCount.value) || 5;
-      
-      sampleTableBody.innerHTML = '';
-      
-      for (let i = 0; i < count; i++) {
-        const num = start + i;
-        const paddedNum = num.toString().padStart(3, '0');
-        const sampleId = pattern.replace('#', paddedNum);
-        
-        const row = document.createElement('tr');
-        row.className = 'border-b border-white/5';
-        row.innerHTML = `
-          <td class="p-2">
-            <input type="text" name="sample_ids[]" value="${sampleId}" readonly class="w-full bg-white/5 border border-white/20 rounded p-1 text-white text-sm">
-          </td>
-          <td class="p-2">
-            <input type="text" name="animal_ids[]" placeholder="ID Animal" class="w-full bg-white/5 border border-white/20 rounded p-1 text-white text-sm">
-          </td>
-          <td class="p-2">
-            <input type="text" name="treatments[]" placeholder="Tratamento" class="w-full bg-white/5 border border-white/20 rounded p-1 text-white text-sm">
-          </td>
-          <td class="p-2">
-            <input type="text" name="observations[]" placeholder="Observação (opcional)" class="w-full bg-white/5 border border-white/20 rounded p-1 text-white text-sm">
-          </td>
-        `;
-        
-        sampleTableBody.appendChild(row);
-      }
-    };
-    
-    // Reagir a mudanças nos campos de configuração
-    if (sampleIdPattern && startNumber && batchCount) {
-      sampleIdPattern.addEventListener('input', generateSampleRows);
-      startNumber.addEventListener('input', generateSampleRows);
-      batchCount.addEventListener('input', generateSampleRows);
-    }
-    
-    // Processar o envio do formulário
-    if (batchSampleForm) {
-      batchSampleForm.addEventListener('submit', async (e) => {
+
+    if (manualSampleForm) {
+      manualSampleForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const formData = new FormData(batchSampleForm);
-        
+
+        const formData = new FormData(manualSampleForm);
+        const sampleIds = formData.getAll('sample_ids[]');
+
+        // Validação: impedir IDs vazios ou repetidos
+        const valid = sampleIds.every(id => id.trim() !== '') && new Set(sampleIds).size === sampleIds.length;
+
+        if (!valid) {
+          alert('Todos os IDs de amostras devem ser únicos e preenchidos.');
+          return;
+        }
+
         try {
-          // Mostrar feedback de carregamento
-          const submitBtn = batchSampleForm.querySelector('button[type="submit"]');
-          const originalText = submitBtn.innerHTML;
-          submitBtn.innerHTML = `
-            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Salvando...
-          `;
-          submitBtn.disabled = true;
-          
           const response = await fetch('/api/add-batch-samples', {
             method: 'POST',
             body: formData
           });
-          
+
           if (response.ok) {
-            // Recarregar a página para mostrar as novas amostras
             window.location.reload();
           } else {
             const errorData = await response.json();
-            alert(`Erro ao adicionar amostras: ${errorData.message || 'Por favor, tente novamente.'}`);
-            
-            // Restaurar o botão
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+            alert('Erro ao salvar: ' + (errorData.message || 'Erro desconhecido.'));
           }
-        } catch (error) {
-          console.error('Erro ao enviar amostras:', error);
-          alert('Ocorreu um erro. Por favor, tente novamente mais tarde.');
-          
-          // Restaurar o botão
-          const submitBtn = batchSampleForm.querySelector('button[type="submit"]');
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
+        } catch (err) {
+          console.error('Erro na submissão', err);
+          alert('Erro inesperado. Tente novamente.');
         }
       });
     }
+
+    // Mostrar formulário ao clicar no botão principal
+    const btns = [document.getElementById('addSamplesBtn'), document.getElementById('noSamplesAdd')];
+    btns.forEach(btn => {
+      if (btn) btn.addEventListener('click', () => {
+        addSamplesArea.classList.remove('hidden');
+        if (editableSampleRows.children.length === 0) createRow();
+      });
+    });
+    document.querySelectorAll('.deleteSampleBtn').forEach(button => {
+  button.addEventListener('click', async () => {
+    const sampleId = button.dataset.id;
+
+    const confirmed = confirm(`Tem certeza que deseja excluir a amostra ${sampleId}?`);
+    if (!confirmed) return;
+
+    const formData = new FormData();
+    formData.append('id', sampleId);
+    formData.append('returnPath', window.location.pathname); // manter na mesma página
+
+    try {
+      const res = await fetch('/api/delete-sample', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (res.redirected) {
+        // Se o servidor redirecionar, recarrega a página
+        window.location.href = res.url;
+        return;
+      }
+
+      if (res.ok) {
+        const row = document.getElementById(`row-${sampleId}`);
+        if (row) {
+          row.classList.add('opacity-50');
+          row.style.transition = 'opacity 0.4s ease';
+          setTimeout(() => row.remove(), 400);
+        }
+      } else {
+        const errorText = await res.text();
+        alert('Erro ao excluir: ' + errorText);
+      }
+    } catch (err) {
+      console.error('Erro na exclusão', err);
+      alert('Erro inesperado ao excluir amostra.');
+    }
+  });
+});
+// Exportar Excel
+const exportExcelBtn = document.getElementById('exportExcel');
+if (exportExcelBtn) {
+  exportExcelBtn.addEventListener('click', () => {
+    const projectId = document.querySelector('p:contains("ID do Projeto:")')?.textContent?.split(':')[1]?.trim();
+    if (!projectId) {
+      alert('ID do projeto não encontrado.');
+      return;
+    }
+
+    const url = `/api/export-samples-excel?project_id=${encodeURIComponent(projectId)}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'amostras.xlsx';
+    link.click();
+  });
+}
+
+// Exportar PDF
+const exportPdfBtn = document.getElementById('exportPdf');
+if (exportPdfBtn) {
+  exportPdfBtn.addEventListener('click', () => {
+    const projectId = document.querySelector('p:contains("ID do Projeto:")')?.textContent?.split(':')[1]?.trim();
+    if (!projectId) {
+      alert('ID do projeto não encontrado.');
+      return;
+    }
+
+    const url = `/api/export-samples-pdf?project_id=${encodeURIComponent(projectId)}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'amostras.pdf';
+    link.click();
+  });
+}
   });
 </script>

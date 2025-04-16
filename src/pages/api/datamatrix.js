@@ -13,21 +13,21 @@ export async function GET({ request }) {
   }
   
   try {
-    // Calcular escala baseada no tamanho solicitado (bwip-js usa escala diferente)
-    const scale = Math.max(1, Math.floor(size / 50));
+    // Calculate scale based on requested size
+    const scale = Math.max(2, Math.floor(size / 40));
     
-    // Gerar SVG usando bwip-js
+    // Generate SVG using bwip-js
     const svgString = await bwipjs.toSVG({
-      bcid: 'datamatrix',       // Tipo de código: DataMatrix
-      text: text,               // Texto a codificar
-      scale: scale,             // Escala calculada para corresponder ao tamanho desejado
-      includetext: false,       // Não incluir texto legível
-      textxalign: 'center',     // Alinhamento do texto (mesmo que não usado)
-      paddingwidth: 2,          // Equivalente à margem
-      paddingheight: 2
+      bcid: 'datamatrix',     // DataMatrix format
+      text: text,             // Text to encode
+      scale: scale,           // Calculated scale
+      includetext: false,     // No readable text
+      textxalign: 'center',   // Alignment (even if not used)
+      paddingwidth: 1,        // Equivalent to margin
+      paddingheight: 1
     });
     
-    // Retornar o SVG
+    // Return the SVG
     return new Response(svgString, {
       headers: {
         'Content-Type': 'image/svg+xml',

@@ -114,10 +114,10 @@ const totalPages = Math.ceil((count || 0) / limit);
 
               <div class="p-4 flex items-center gap-3 flex-grow">
                 <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(sample.sample_id)}&size=150x150&format=svg&type=datamatrix`} 
-                  alt={`Data Matrix para ${sample.sample_id}`}
-                  class="w-20 h-20 datamatrix-img"
-                  data-sample-id={sample.sample_id}
+                src={`/api/datamatrix?text=${encodeURIComponent(sample.sample_id)}&size=150`} 
+                alt={`Data Matrix para ${sample.sample_id}`}
+                class="w-20 h-20 datamatrix-img"
+                data-sample-id={sample.sample_id}
                 />
                 <div>
                   <h3 class="font-semibold">{sample.sample_id}</h3>
