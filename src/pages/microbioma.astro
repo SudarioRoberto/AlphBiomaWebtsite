@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microbioma AlphaBioma</title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <!-- AOS (Animate On Scroll) -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- Lottie for animations -->
+  <script src="https://unpkg.com/lottie-web@5.7.13/build/player/lottie.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+<body class="bg-gradient-to-b from-white to-blue-50 text-blue-800">
+  <!-- Hero Section -->
+  <section class="min-h-screen flex flex-col items-center justify-center px-6 md:px-12 py-24">
+    <div class="max-w-4xl text-center">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4" data-aos="fade-down">O que é o Microbioma?</h1>
+      <p class="text-lg mb-8" data-aos="fade-up" data-aos-delay="200">
+        Conjunto de microrganismos que habitam o trato gastrointestinal e influenciam diretamente a saúde, imunidade e desempenho dos seus animais.
+      </p>
+      <div class="w-full md:w-2/3 mx-auto" data-aos="zoom-in" data-aos-delay="400">
+        <!-- Lottie Animation Container -->
+        <div id="lottie-microbiome" class="w-full h-64"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-20 px-6 md:px-12">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12" data-aos="fade-right">Como funciona o processo</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Step Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition" data-aos="fade-up" data-aos-delay="100">
+          <h3 class="text-2xl font-semibold mb-2">1. Coleta de Amostras</h3>
+          <p class="text-blue-600">Você recebe nosso kit personalizado e coleta rapidamente seguindo protocolo simples.</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition" data-aos="fade-up" data-aos-delay="200">
+          <h3 class="text-2xl font-semibold mb-2">2. Envio Seguro</h3>
+          <p class="text-blue-600">Kits com estabilizadores protegem o DNA microbiano até chegar ao laboratório.</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition" data-aos="fade-up" data-aos-delay="300">
+          <h3 class="text-2xl font-semibold mb-2">3. Análise de Sequenciamento</h3>
+          <p class="text-blue-600">Sequenciamento de última geração identifica milhares de espécies em cada amostra.</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition" data-aos="fade-up" data-aos-delay="400">
+          <h3 class="text-2xl font-semibold mb-2">4. Relatório Interativo</h3>
+          <p class="text-blue-600">Painel online mostra resultados e insights práticos acionáveis.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alphabioma Journey Section -->
+  <section class="py-20 bg-blue-100 px-6 md:px-12">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-12" data-aos="fade-down">Sua jornada com a AlphaBioma</h2>
+      <div class="relative">
+        <!-- Vertical Line -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 h-full border-l-2 border-blue-300"></div>
+        <div class="space-y-16">
+          <!-- Timeline Item -->
+          <div class="flex flex-col md:flex-row items-center md:items-start" data-aos="fade-right">
+            <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold z-10">1</div>
+            <div class="md:ml-6 mt-4 md:mt-0 bg-white rounded-xl p-6 shadow">
+              <h3 class="font-semibold mb-2">Projeto Criado</h3>
+              <p class="text-blue-600">Você define objetivos e criamos seu projeto no painel administrativo.</p>
+            </div>
+          </div>
+          <div class="flex flex-col md:flex-row-reverse items-center md:items-start" data-aos="fade-left">
+            <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold z-10">2</div>
+            <div class="md:mr-6 mt-4 md:mt-0 bg-white rounded-xl p-6 shadow">
+              <h3 class="font-semibold mb-2">Envio de Material</h3>
+              <p class="text-blue-600">Kits são despachados diretamente para sua fazenda.</p>
+            </div>
+          </div>
+          <div class="flex flex-col md:flex-row items-center md:items-start" data-aos="fade-right">
+            <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold z-10">3</div>
+            <div class="md:ml-6 mt-4 md:mt-0 bg-white rounded-xl p-6 shadow">
+              <h3 class="font-semibold mb-2">Acompanhamento no App</h3>
+              <p class="text-blue-600">Você acompanha cada etapa pelo app, em tempo real.</p>
+            </div>
+          </div>
+          <div class="flex flex-col md:flex-row-reverse items-center md:items-start" data-aos="fade-left">
+            <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold z-10">4</div>
+            <div class="md:mr-6 mt-4 md:mt-0 bg-white rounded-xl p-6 shadow">
+              <h3 class="font-semibold mb-2">Recomendações Práticas</h3>
+              <p class="text-blue-600">Relatório gera insights customizados para melhorar performance e saúde.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- App Preview Section -->
+  <section class="py-20 px-6 md:px-12">
+    <div class="max-w-4xl mx-auto text-center" data-aos="zoom-in">
+      <h2 class="text-3xl font-bold mb-8">Acompanhe pelo App</h2>
+      <img src="/images/app-screens.png" alt="App AlphaBioma" class="mx-auto rounded-xl shadow-lg" />
+      <p class="mt-6 text-blue-600">Notificações e dashboards em tempo real no seu smartphone.</p>
+    </div>
+  </section>
+
+  <!-- Initialize Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({ once: true, duration: 800 });
+      lottie.loadAnimation({
+        container: document.getElementById('lottie-microbiome'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '/animations/microbiome.json'
+      });
+    });
+  </script>
+</body>
+</html>
