@@ -1,4 +1,10 @@
+# robots.txt para AlphaBioma
 User-agent: *
 Allow: /
 
+# Proteger áreas administrativas e sensíveis
+Disallow: /admin/
+Disallow: /api/
+
+# Apontar para o sitemap
 Sitemap: https://www.alphabioma.com/sitemap.xml
