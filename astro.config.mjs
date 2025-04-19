@@ -2,13 +2,17 @@ import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import mdx from '@astrojs/mdx';
 import sitemap from 'astro-sitemap';
+import linkedInPublisher from './src/integrations/linkedin-publisher.js';
 
 export default defineConfig({
-  site: 'https://www.alphabioma.com', // Substitua pelo seu domínio real
+  site: 'https://www.alphabioma.com', // Seu domínio real
   output: 'server',
   adapter: node({
     mode: 'standalone'
   }),
+  experimental: {
+    session: true
+  },
   integrations: [
     mdx(),
     sitemap({
@@ -31,5 +35,13 @@ export default defineConfig({
       // Excluir áreas administrativas (opcional se já estiver usando customPages)
       filter: (page) => !page.includes('/admin/'),
     }),
-  ]
+    // Integração LinkedIn Publisher
+    linkedInPublisher()
+  ],
+  // Vite config para definir variáveis de ambiente públicas
+  vite: {
+    define: {
+      'import.meta.env.PUBLIC_SITE_URL': JSON.stringify(process.env.SITE_URL || 'https://www.alphabioma.com')
+    }
+  }
 });
