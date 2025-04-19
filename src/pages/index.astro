@@ -5,33 +5,19 @@ import Services from '../components/Services.astro';
 import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
-import Insights from '../components/Insights.astro'
+import Insights from '../components/Insights.astro';
 import ClientLogos from '../components/ClientLogos.astro';
 import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AlphaBioma</title>
-    <style>
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 0.5; }
-      }
-    </style>
-  </head>
-  <body class="relative bg-gradient-to-br from-blue-950 to-black text-white font-sans section-padding">
-    <Navbar />
-    <main class="relative z-10">
-		<Layout>
-		<Hero />
-      <Services />
-      <About />
-	  <Insights/>
-      <Contact />
-	  <Footer />
-    </main>
-  </body>
-</html>
+<Layout>
+  <Navbar />
+  <main class="relative z-10">
+    <Hero />
+    <Services />
+    <About />
+    <Insights/>
+    <Contact />
+    <Footer />
+  </main>
+</Layout>
