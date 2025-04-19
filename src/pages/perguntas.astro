@@ -1,0 +1,577 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout>
+  <Navbar />
+</div><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perguntas Frequentes - AlphaBioma</title>
+  <style>
+    :root {
+      --color-blue-primary: #3533c9;
+      --color-blue-secondary: #0048b5;
+      --color-blue-tertiary: #215ec3;
+      --color-blue-quaternary: #326bc3;
+      --color-blue-quinary: #4c7fcb;
+      --color-blue-senary: #94b3ec;
+      --color-gray-light: #e6ebf1;
+      --color-white: #ffffff;
+      --color-black: #000000;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: white;
+      background: linear-gradient(to bottom, #0c1c3d, #000000);
+      min-height: 100vh;
+    }
+    
+    .faq-header {
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/assets/images/microbiome-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      padding: 4rem 1rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-header {
+        padding: 6rem 2rem;
+      }
+    }
+    
+    .faq-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(53, 51, 201, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 70%, rgba(0, 72, 181, 0.15) 0%, transparent 50%);
+      z-index: -1;
+    }
+    
+    .faq-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-header h1 {
+        font-size: 2.5rem;
+      }
+    }
+    
+    .faq-header p {
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      color: var(--color-gray-light);
+    }
+    
+    @media (min-width: 768px) {
+      .faq-header p {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .faq-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-container {
+        padding: 3rem 1.5rem;
+      }
+    }
+    
+    .faq-category {
+      margin-bottom: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-category {
+        margin-bottom: 3rem;
+      }
+    }
+    
+    .category-header {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background-color: rgba(76, 127, 203, 0.2);
+      border-radius: 2rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid rgba(148, 179, 236, 0.3);
+    }
+    
+    .category-header h2 {
+      margin: 0;
+      font-size: 1.4rem!important;
+      color: var(--color-blue-senary);
+      font-weight: 600;
+    }
+    
+    @media (min-width: 768px) {
+      .category-header h2 {
+        font-size: 1.2rem;
+      }
+    }
+    
+    .faq-item {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .faq-item:hover {
+      border-color: rgba(76, 127, 203, 0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .faq-question {
+      padding: 1rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: white;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-question {
+        padding: 1.25rem;
+        font-size: 1rem;
+      }
+    }
+    
+    .faq-question::after {
+      content: '+';
+      font-size: 1.5rem;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      margin-left: 0.5rem;
+    }
+    
+    .faq-item.active .faq-question::after {
+      transform: rotate(45deg);
+    }
+    
+    .faq-answer {
+      padding: 0 1rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-answer {
+        padding: 0 1.25rem;
+      }
+    }
+    
+    .faq-item.active .faq-answer {
+      padding: 0 1rem 1rem;
+      max-height: 2000px;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-item.active .faq-answer {
+        padding: 0 1.25rem 1.25rem;
+      }
+    }
+    
+    .faq-answer p {
+      margin: 0;
+      color: var(--color-gray-light);
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+    
+    @media (min-width: 768px) {
+      .faq-answer p {
+        font-size: 1rem;
+      }
+    }
+    
+    .cta-section {
+      text-align: center;
+      background-color: rgba(0, 72, 181, 0.1);
+      padding: 2rem 1rem;
+      margin-top: 2rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(76, 127, 203, 0.2);
+    }
+    
+    @media (min-width: 768px) {
+      .cta-section {
+        padding: 3rem 1.5rem;
+      }
+    }
+    
+    .cta-heading {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+      .cta-heading {
+        font-size: 1.5rem;
+      }
+    }
+    
+    .cta-text {
+      margin-bottom: 1.5rem;
+      color: var(--color-gray-light);
+      font-size: 0.9rem;
+    }
+    
+    @media (min-width: 768px) {
+      .cta-text {
+        margin-bottom: 2rem;
+        font-size: 1rem;
+      }
+    }
+    
+    .flex {
+      display: flex;
+    }
+    
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+    
+    .justify-center {
+      justify-content: center;
+    }
+    
+    .gap-4 {
+      gap: 1rem;
+    }
+    
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(to right, var(--color-blue-secondary), var(--color-blue-primary));
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      width: 100%;
+      justify-content: center;
+    }
+    
+    @media (min-width: 480px) {
+      .cta-btn {
+        width: auto;
+        margin-bottom: 0;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .cta-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+      }
+    }
+    
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 72, 181, 0.4);
+    }
+    
+    /* Efeitos de animação para os elementos de fundo */
+    .bg-element {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.1;
+      z-index: -1;
+    }
+    
+    .bg-element-1 {
+      width: 300px;
+      height: 300px;
+      background-color: var(--color-blue-primary);
+      top: 20%;
+      left: -100px;
+      animation: float 8s ease-in-out infinite;
+    }
+    
+    .bg-element-2 {
+      width: 250px;
+      height: 250px;
+      background-color: var(--color-blue-secondary);
+      bottom: 10%;
+      right: -50px;
+      animation: float 10s ease-in-out infinite reverse;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-element bg-element-1"></div>
+  <div class="bg-element bg-element-2"></div>
+  
+  <header class="faq-header">
+    <h1>Perguntas Frequentes</h1>
+    <p>Encontre respostas para as dúvidas mais comuns sobre nossos serviços de análise de microbioma e ciência de dados para produção animal</p>
+  </header>
+  
+  <div class="faq-container">
+    <!-- Microbioma -->
+    <div class="faq-category">
+      <div class="category-header">
+        <h2>Microbioma</h2>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">O que exatamente é um microbioma e por que é importante na produção animal?</div>
+        <div class="faq-answer">
+          <p>O microbioma é o conjunto de todos os microorganismos (bactérias, fungos, vírus e protozoários) que vivem em um determinado ambiente — no caso da produção animal, principalmente o trato gastrointestinal. Esses microorganismos desempenham funções cruciais na digestão, absorção de nutrientes, desenvolvimento do sistema imunológico e proteção contra patógenos. Um microbioma equilibrado está diretamente relacionado à melhor saúde intestinal, menor incidência de doenças, melhor conversão alimentar e, consequentemente, maior produtividade e rentabilidade na produção animal.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Quais tipos de análise de microbioma a AlphaBioma oferece?</div>
+        <div class="faq-answer">
+          <p>Oferecemos diversos tipos de análise de microbioma, incluindo: sequenciamento de 16S rRNA para identificação taxonômica de bactérias; análise de metagenômica para identificação da composição e funções; análise de perfil metabólico e rotas funcionais; análise de diversidade e riqueza microbiana; correlação entre microbioma e parâmetros de desempenho; avaliação de efeitos de intervenções nutricionais, aditivos e antibióticos no microbioma; e monitoramento longitudinal de mudanças na microbiota durante diferentes fases de produção.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Como as análises de microbioma podem melhorar meus resultados na produção de suínos/aves/bovinos?</div>
+        <div class="faq-answer">
+          <p>As análises de microbioma podem melhorar seus resultados ao: identificar desequilíbrios microbianos que afetam a saúde intestinal e o desempenho dos animais; avaliar a eficácia de aditivos e estratégias nutricionais; personalizar dietas que promovam perfis microbianos benéficos; detectar precocemente problemas de saúde antes dos sintomas clínicos; otimizar o uso de antibióticos e suas alternativas; comparar o microbioma entre grupos de alto e baixo desempenho; e desenvolver estratégias para reduzir a variabilidade entre lotes. Tudo isso se traduz em melhor conversão alimentar, redução de mortalidade, diminuição do uso de antibióticos e aumento da lucratividade.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Que tipo de amostras são necessárias para análise de microbioma?</div>
+        <div class="faq-answer">
+          <p>Para análises de microbioma, geralmente coletamos amostras de fezes, conteúdo intestinal ou swabs retais/cloacais. A quantidade e o método de coleta variam conforme o animal e o objetivo do estudo. Fornecemos kits de coleta com instruções detalhadas, preservantes apropriados e protocolo para armazenamento e envio das amostras. É crucial seguir os protocolos de coleta para garantir a integridade das amostras e a qualidade das análises. Nossa equipe pode orientar sobre os melhores procedimentos de amostragem para seu caso específico.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Qual é a diferença entre sua análise de microbioma e outras disponíveis no mercado?</div>
+        <div class="faq-answer">
+          <p>Diferentemente de outros serviços que apenas identificam quais microrganismos estão presentes, nós vamos além ao analisar o que esses microrganismos estão fazendo. Nossa abordagem foca nas funções biológicas e rotas metabólicas ativas no microbioma, revelando o impacto real na saúde e desempenho animal. Unimos esta análise funcional com dados de desempenho, ambiente e manejo, oferecendo uma visão integrada e aplicável. Nossos relatórios traduzem dados complexos em recomendações práticas para ajustes de dieta, manejo e estratégias de saúde animal, com linguagem acessível e gráficos intuitivos que facilitam a tomada de decisão.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Análise de Dados -->
+    <div class="faq-category">
+      <div class="category-header">
+        <h2>Análise de Dados</h2>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Que tipo de dados vocês conseguem analisar?</div>
+        <div class="faq-answer">
+          <p>Analisamos diversos tipos de dados relacionados à produção animal, incluindo: dados de desempenho zootécnico (ganho de peso, conversão alimentar, mortalidade); parâmetros de saúde e bem-estar animal; dados de qualidade de carcaça; resultados de experimentos e testes de produtos; dados de microbioma e sequenciamento genético; registros de manejo, nutrição e vacinação; dados ambientais como temperatura, umidade e qualidade do ar; e informações econômicas e de custo-benefício. Todos esses dados são integrados em nossa plataforma e acessíveis através do aplicativo AlphaBioma, permitindo análises correlacionadas e multifatoriais. Nossa expertise abrange técnicas estatísticas tradicionais e métodos avançados de aprendizado de máquina, sempre adaptando a abordagem às características específicas dos seus dados.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Como vocês transformam dados em decisões práticas para minha operação?</div>
+        <div class="faq-answer">
+          <p>Transformamos dados em decisões práticas através de um processo estruturado: primeiro, realizamos uma análise exploratória para entender padrões e relações nos dados; depois, aplicamos métodos estatísticos robustos para identificar fatores significativos que impactam o desempenho; em seguida, desenvolvemos modelos preditivos que permitem simular diferentes cenários; e finalmente, traduzimos tudo isso em relatórios claros com recomendações específicas para sua operação. Através do aplicativo AlphaBioma, você pode acompanhar este processo em tempo real, visualizar resultados preliminares assim que são gerados e interagir com nossa equipe para ajustar análises conforme necessário. Nosso diferencial está na capacidade de contextualizar os resultados para sua realidade, considerando aspectos práticos como viabilidade operacional, relação custo-benefício e priorização de ações que trarão maior retorno sobre investimento.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Quais métodos estatísticos vocês utilizam nas análises?</div>
+        <div class="faq-answer">
+          <p>Utilizamos uma ampla gama de métodos estatísticos, selecionados de acordo com a natureza dos dados e os objetivos da análise. Para comparações entre grupos, aplicamos testes paramétricos (ANOVA, teste t) e não-paramétricos quando necessário. Em estudos com múltiplos fatores, usamos modelos lineares mistos que consideram efeitos fixos e aleatórios. Para análises de microbioma, empregamos métodos específicos como PERMANOVA, PCoA e LEfSe. Utilizamos também técnicas avançadas de aprendizado de máquina como Random Forest e SVM para identificação de padrões complexos, além de modelos bayesianos para inferência mais robusta. Independentemente do método, nosso foco está sempre na interpretação correta e na aplicabilidade prática dos resultados.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Por que devo investir em análise de dados para minha produção animal?</div>
+        <div class="faq-answer">
+          <p>Investir em análise de dados na produção animal permite tomar decisões baseadas em evidências, não apenas em intuição ou tradição. Isso se traduz em diversos benefícios: otimização de dietas e formulações para máximo desempenho com menor custo; identificação precoce de problemas antes que causem perdas significativas; redução da variabilidade entre lotes; avaliação objetiva do retorno sobre investimento de novas tecnologias ou aditivos; e personalização de estratégias para diferentes condições. Em um setor com margens cada vez mais apertadas, a análise de dados se torna uma vantagem competitiva essencial, gerando retornos significativos para cada real investido através da melhoria de eficiência e redução de desperdícios.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Tenho um experimento com resultados inconclusivos. Vocês podem ajudar?</div>
+        <div class="faq-answer">
+          <p>Sim, a reanálise de projetos inconclusivos é uma de nossas especialidades. Muitas vezes, experimentos não apresentam resultados claros devido a abordagens estatísticas inadequadas ou à falta de consideração de fatores relevantes. Nossa equipe pode revisar seu desenho experimental, reprocessar os dados com métodos estatísticos mais apropriados, incluir variáveis que possam ter sido negligenciadas e aplicar técnicas avançadas para extrair insights significativos. Em diversos casos, conseguimos revelar efeitos significativos que estavam "escondidos" nos dados ou explicar por que os tratamentos não tiveram o efeito esperado, fornecendo direções claras para ajustes em futuros experimentos.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Aplicativo AlphaBioma -->
+    <div class="faq-category">
+      <div class="category-header">
+        <h2>Aplicativo AlphaBioma</h2>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Como funciona o aplicativo da AlphaBioma?</div>
+        <div class="faq-answer">
+          <p>O aplicativo AlphaBioma é uma plataforma exclusiva para nossos clientes acompanharem todos os estágios de seus projetos em tempo real. Ao assinar o contrato, você recebe um número de projeto e uma senha de acesso. Através do aplicativo, disponível para iOS e Android, você pode: acompanhar o status de processamento de cada amostra; visualizar resultados preliminares à medida que ficam disponíveis; interagir com nossa equipe técnica através do chat integrado; acessar relatórios e análises anteriores; programar coletas e envios de novas amostras; e receber notificações sobre atualizações importantes. Cada kit de coleta inclui tubos com QR codes únicos que, ao serem escaneados pelo aplicativo, vinculam automaticamente todas as informações da amostra ao nosso banco de dados, eliminando problemas de identificação e garantindo total rastreabilidade.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Como o sistema de QR code do aplicativo resolve problemas de identificação de amostras?</div>
+        <div class="faq-answer">
+          <p>Um dos maiores desafios em projetos de análise de microbioma é a identificação precisa das amostras. Problemas comuns incluem: anotações ilegíveis nos tubos; etiquetas que se descolam devido à umidade ou baixas temperaturas; informações em papel que se perdem ou danificam; e erros de transcrição manual de dados. O sistema de QR code da AlphaBioma elimina todos esses problemas. Cada tubo do nosso kit de coleta possui um código único que, ao ser escaneado com o aplicativo, permite registrar todas as informações relevantes (identificação do animal, data/hora, condições ambientais, tratamentos, sintomas) diretamente no nosso banco de dados seguro. Estas informações ficam permanentemente vinculadas à amostra e podem ser acessadas a qualquer momento. Além de eliminar erros de identificação, o sistema agiliza o processo de coleta e reduz drasticamente o tempo de processamento inicial no laboratório.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Impressão Digital de Produtos -->
+    <div class="faq-category">
+      <div class="category-header">
+        <h2>Impressão Digital de Produtos</h2>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">O que é a impressão digital de produtos e como pode me ajudar?</div>
+        <div class="faq-answer">
+          <p>A impressão digital de produtos é uma metodologia exclusiva da AlphaBioma que identifica precisamente como aditivos, probióticos, prebióticos e outros produtos interagem com o microbioma intestinal dos animais. Diferentemente de avaliações tradicionais que se limitam a medir parâmetros de desempenho, nossa abordagem detecta mudanças sutis no perfil microbiano e nas rotas metabólicas, mesmo quando não há diferenças aparentes nos indicadores convencionais. Esta análise nos permite entender se um produto está realmente atuando nos mecanismos biológicos propostos, mesmo que ainda não se reflita em ganhos de desempenho mensuráveis, oferecendo insights valiosos para otimização de formulações e estratégias de uso.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Por que um produto pode não apresentar resultados esperados mesmo sendo eficaz?</div>
+        <div class="faq-answer">
+          <p>Muitos produtos de qualidade não demonstram resultados esperados não porque são ineficazes, mas porque necessitam de ajustes finos para seu contexto específico. O microbioma intestinal é influenciado por inúmeros fatores: genética dos animais, ambiente, dieta base, qualidade da água, manejo, idade, presença de desafios sanitários e interações entre diferentes aditivos. Nossa análise de impressão digital identifica precisamente onde ocorre a "desconexão" entre o mecanismo de ação do produto e o resultado esperado. Frequentemente, descobrimos que ajustes simples na dosagem, momento de administração, combinação com outros ingredientes ou adaptação às condições específicas da granja podem transformar um produto aparentemente "ineficaz" em uma solução altamente efetiva para sua operação.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Como vocês avaliam se um produto realmente está funcionando através do microbioma?</div>
+        <div class="faq-answer">
+          <p>Nossa metodologia de avaliação vai além da simples análise de composição microbiana. Investigamos as rotas metabólicas, genes funcionais e produtos metabólicos (metabólitos) que indicam a atividade real dos microrganismos. Primeiramente, estabelecemos uma linha de base do microbioma antes da intervenção. Depois, analisamos mudanças específicas após a aplicação do produto, verificando se os mecanismos propostos estão realmente sendo ativados. Por exemplo, para um produto que promete melhorar a digestão de fibras, verificamos se há aumento na abundância e atividade de bactérias fibrolíticas e nas enzimas relacionadas à degradação de polissacarídeos complexos. Todos estes dados são acessíveis em tempo real através do aplicativo AlphaBioma, permitindo que você acompanhe a evolução da análise e visualize os resultados de forma interativa, facilitando a compreensão e aplicação prática das descobertas.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Serviços e Logística -->
+    <div class="faq-category">
+      <div class="category-header">
+        <h2>Serviços e Logística</h2>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Quanto tempo leva para receber resultados das análises?</div>
+        <div class="faq-answer">
+          <p>O tempo para recebimento dos resultados varia conforme o tipo e a complexidade da análise. Para análises de microbioma, o prazo típico é de 3 a 5 semanas após o recebimento das amostras, incluindo sequenciamento e análise bioinformática. Para projetos de análise de dados, o prazo médio é de 2 a 3 semanas, dependendo do volume e complexidade dos dados. Projetos mais abrangentes, como estudos integrados de microbioma e desempenho ou reanálises complexas, podem levar de 4 a 8 semanas. Sempre estabelecemos prazos claros no início do projeto e mantemos comunicação constante sobre o progresso. Para necessidades urgentes, temos opções de análise prioritária com prazos reduzidos.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Como são os relatórios e entregas dos projetos?</div>
+        <div class="faq-answer">
+          <p>Nossos relatórios são elaborados para serem claros, aplicáveis e visualmente intuitivos. Cada relatório inclui: resumo executivo com principais achados e recomendações; metodologia detalhada; resultados apresentados em gráficos e tabelas de fácil compreensão; interpretação dos dados com foco em implicações práticas; e recomendações específicas para sua operação. Além do documento em PDF, fornecemos uma apresentação em slides para facilitar a comunicação com sua equipe ou clientes. Para projetos de microbioma, incluímos também visualizações interativas da composição microbiana e funções metabólicas. Todos os relatórios são personalizados conforme suas necessidades e podem incluir análises adicionais específicas para seu contexto.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Vocês oferecem suporte após a entrega dos relatórios?</div>
+        <div class="faq-answer">
+          <p>Sim, oferecemos suporte pós-entrega para todos os nossos projetos. Após o recebimento do relatório, agendamos uma reunião de apresentação dos resultados onde explicamos detalhadamente os achados e respondemos a todas as dúvidas. Durante os 30 dias seguintes à entrega, estamos disponíveis para esclarecimentos adicionais e ajustes menores sem custo adicional. O acesso ao aplicativo AlphaBioma permanece ativo após a conclusão do projeto, permitindo consultas aos relatórios, gráficos interativos e histórico de análises a qualquer momento. Para clientes recorrentes, oferecemos pacotes de suporte contínuo que incluem consultorias periódicas para acompanhamento da implementação das recomendações e ajustes conforme necessário. Também oferecemos workshops e treinamentos para sua equipe sobre como interpretar e aplicar os resultados na rotina diária da operação.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Como é o processo de contratação e início de um projeto?</div>
+        <div class="faq-answer">
+          <p>O processo de contratação segue estas etapas: primeiro, realizamos uma consulta inicial gratuita para entender suas necessidades e objetivos; com base nessa conversa, elaboramos uma proposta detalhada incluindo escopo, metodologia, prazos e investimento; após a aprovação da proposta, assinamos um contrato que inclui termos de confidencialidade e definição clara das entregas; em seguida, você recebe suas credenciais de acesso ao aplicativo AlphaBioma, onde poderá acompanhar todo o processo com total transparência; realizamos uma reunião de kickoff para alinhar expectativas e planejar as etapas seguintes; e finalmente, iniciamos a execução do projeto seguindo o cronograma estabelecido. Todo o processo é conduzido com flexibilidade para adaptar-se às suas necessidades específicas.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Vocês atendem empresas de qualquer tamanho?</div>
+        <div class="faq-answer">
+          <p>Sim, atendemos empresas e produtores de todos os tamanhos, desde operações familiares até grandes integrações e corporações multinacionais. Temos pacotes e abordagens adaptados a diferentes portes e necessidades. Para pequenos e médios produtores, oferecemos soluções com excelente custo-benefício, focadas em análises essenciais que trazem retorno imediato. Para grandes empresas, desenvolvemos projetos mais abrangentes que podem incluir múltiplas unidades produtivas, análises comparativas entre diferentes regiões e integração com outros sistemas de dados. Independentemente do tamanho da operação, nosso compromisso é entregar análises rigorosas e recomendações práticas que geram valor real para seu negócio.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- CTA Section -->
+    <div class="cta-section">
+      <h3 class="cta-heading">Ainda tem dúvidas?</h3>
+      <p class="cta-text">Entre em contato conosco para uma consulta inicial gratuita. Estamos prontos para discutir seu projeto e explicar como podemos ajudar.</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="https://api.whatsapp.com/send/?phone=16126663177&text=Ol%C3%A1%21+Gostaria+de+falar+com+a+AlphaBioma.&type=phone_number&app_absent=0" class="cta-btn">
+          Fale Conosco
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/aplicativos" class="cta-btn bg-gradient-to-r from-green-600 to-green-500">
+          Conheça Nosso Aplicativo
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const faqItems = document.querySelectorAll('.faq-item');
+      
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+          // Close all other items
+          faqItems.forEach(otherItem => {
+            if (otherItem !== item && otherItem.classList.contains('active')) {
+              otherItem.classList.remove('active');
+            }
+          });
+          
+          // Toggle current item
+          item.classList.toggle('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+<Footer />
+</Layout>

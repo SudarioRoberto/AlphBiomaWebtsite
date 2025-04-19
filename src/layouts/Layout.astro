@@ -3,20 +3,44 @@ import '../styles/global.css';
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Lab Services</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>AlphaBioma - Dados que guiam, ciência que entrega</title>
+    
+    <!-- Favicon e ícones -->
+    <link rel="icon" type="image/png" href="/assets/logos/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/logos/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logos/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/logos/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Metadados para SEO -->
+    <meta name="description" content="A AlphaBioma transforma dados em decisões que melhoram a saúde, o desempenho e a rentabilidade do seu rebanho. Análise de microbioma e dados para o setor agropecuário.">
     <meta name="theme-color" content="#0048b5">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="AlphaBioma - Dados que guiam, ciência que entrega">
+    <meta property="og:description" content="Transformamos dados em decisões que melhoram a saúde, o desempenho e a rentabilidade do seu rebanho.">
+    <meta property="og:image" content="/assets/logos/og-image.png">
+    <meta property="og:url" content="https://www.alphabioma.com">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AlphaBioma - Análise de microbioma para agropecuária">
+    <meta name="twitter:description" content="Transformamos dados em decisões que melhoram a saúde, o desempenho e a rentabilidade do seu rebanho.">
+    <meta name="twitter:image" content="/assets/logos/twitter-image.png">
+    
+    <!-- Recursos externos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   </head>
   <body>
     <slot />
 
-    <!-- ✅ Botão flutuante do WhatsApp -->
-    <a
+    <!-- Botão flutuante do WhatsApp -->
+    
       href="https://wa.me/16126663177?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20a%20AlphaBioma."
       target="_blank"
       rel="noopener"
@@ -25,8 +49,33 @@ import '../styles/global.css';
     >
       <img src="/assets/logos/WhatsApp.png" alt="WhatsApp" class="w-6 h-6" />
     </a>
+    
+    <!-- Structured Data para SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "AlphaBioma",
+      "url": "https://www.alphabioma.com",
+      "logo": "https://www.alphabioma.com/assets/logos/logo.png",
+      "description": "A AlphaBioma transforma dados em decisões que melhoram a saúde, o desempenho e a rentabilidade do seu rebanho.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Patos de Minas",
+        "addressRegion": "MG",
+        "addressCountry": "BR"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/alphabioma1/",
+        "https://github.com/SudarioRoberto"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+16126663177",
+        "contactType": "customer service",
+        "email": "sudario@alphabioma.com"
+      }
+    }
+    </script>
   </body>
 </html>
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
