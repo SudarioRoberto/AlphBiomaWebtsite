@@ -16,3 +16,164 @@
   .animate-fade-in {
     animation: fade-in 0.8s ease-out forwards;
   }
+
+/* Ajustes para telas pequenas/celulares (< 640px - padrão Tailwind sm) */
+@media (max-width: 639px) {
+  /* Navegação mobile */
+  .mobile-menu-expanded {
+    max-height: 100vh;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .mobile-menu-collapsed {
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Tipografia responsiva */
+  h1, .h1 {
+    font-size: 2.25rem !important; /* 36px */
+    line-height: 1.2 !important;
+  }
+  
+  h2, .h2 {
+    font-size: 1.875rem !important; /* 30px */
+    line-height: 1.3 !important;
+  }
+  
+  h3, .h3 {
+    font-size: 1.5rem !important; /* 24px */
+    line-height: 1.4 !important;
+  }
+  
+  /* Espaçamento ajustado para mobile */
+  .section-padding {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+  
+  /* Containers e grids responsivos */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Cards e elementos responsivos */
+  .card-mobile {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Botões de tamanho adequado para toque */
+  .btn-touch {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+  
+  /* Espaçamento para formulários */
+  input, select, textarea {
+    margin-bottom: 1rem !important;
+    padding: 0.75rem !important;
+  }
+  
+  /* Ajuste para o hero section */
+  #hero {
+    min-height: 100vh !important;
+    padding-top: 5rem !important;
+  }
+  
+  /* Flutuantes mais visíveis */
+  .floating-btn {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Ajustes para tablets (640px - 768px) */
+@media (min-width: 640px) and (max-width: 767px) {
+  .container {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+  
+  h1, .h1 {
+    font-size: 2.5rem !important; /* 40px */
+  }
+  
+  .section-padding {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+}
+
+/* Ajustes em tamanhos específicos para elementos particulares */
+@media (max-width: 768px) {
+  /* Grid ajustado para 1 coluna */
+  .grid-cols-auto {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Imagens responsivas */
+  .responsive-img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* Ocultar elementos decorativos em telas pequenas */
+  .decorative-bg {
+    opacity: 0.1 !important;
+  }
+  
+  /* Menu de navegação ajustado */
+  .nav-items {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  
+  /* Botões de ação principais em largura total */
+  .btn-primary-mobile {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* Utilitários de ajuste específico para problemas comuns em mobile */
+.text-adjust {
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+}
+
+/* Botões flutuantes para mobile - Ajustar conforme necessidade */
+.floating-whatsapp {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 50;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 50;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: none;
+}
+
+.back-to-top.visible {
+  display: flex;
+}

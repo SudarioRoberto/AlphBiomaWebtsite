@@ -72,16 +72,18 @@ import Footer from "../components/Footer.astro";
     }
     
     .cta-button {
-      display: inline-block;
-      padding: 1rem 2rem;
-      background: linear-gradient(to right, var(--primary), var(--primary-dark));
-      color: white;
-      font-weight: 600;
-      border-radius: 8px;
-      text-decoration: none;
-      box-shadow: 0 10px 20px -5px rgba(86, 53, 177, 0.4);
-      transition: transform 0.3s ease;
-    }
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: linear-gradient(to right, var(--primary), var(--primary-dark));
+        color: var(--dark);
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        box-shadow: 0 10px 20px -5px rgba(86, 53, 177, 0.4);
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 100;
+      }
     
     .cta-button:hover {
       transform: translateY(-5px);
@@ -803,7 +805,7 @@ import Footer from "../components/Footer.astro";
   
   
   <!-- What is Data Analysis Section -->
-  <section id="analysis" class="section methods-section">
+  <section id="analysis" class="section methods-section section-padding">
     <div class="container">
       <div style="text-align: center; margin-bottom: 3rem;">
         <h2 class="section-title">Nossa abordagem analítica</h2>
@@ -851,7 +853,7 @@ import Footer from "../components/Footer.astro";
   </section>
   
   <!-- Pain Points Section -->
-  <section id="pain-points" class="section pain-section">
+  <section id="pain-points" class="section pain-section section-padding">
     <div class="container">
       <div style="text-align: center; margin-bottom: 3rem;">
         <h2 class="section-title">Superando as dores da pesquisa</h2>
@@ -903,7 +905,7 @@ import Footer from "../components/Footer.astro";
   </section>
   
   <!-- Process Section -->
-  <section id="process" class="section process-section">
+  <section id="process" class="section process-section section-padding">
     <div class="container">
       <div style="text-align: center; margin-bottom: 3rem;">
         <h2 class="section-title">Nosso processo analítico</h2>
@@ -997,7 +999,7 @@ import Footer from "../components/Footer.astro";
   </section>
   
   <!-- Case Studies Section -->
-  <section id="case-studies" class="section case-studies-section">
+  <section id="case-studies" class="section case-studies-section section-padding">
     <div class="container case-studies-container">
       <div style="text-align: center; margin-bottom: 3rem;">
         <h2 class="section-title">Casos de Sucesso</h2>

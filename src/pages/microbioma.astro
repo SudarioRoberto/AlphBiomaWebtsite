@@ -46,7 +46,7 @@ import Footer from "../components/Footer.astro";
       /* Hero */
       .hero-section {
         position: relative;
-        min-height: 96vh;
+        min-height: 90vh;
         display: flex;
         align-items: center;
         background: radial-gradient(circle at center, rgba(20, 20, 20, 0.8), transparent 70%), linear-gradient(135deg, #08192f, #0b1a2d, #060d19);
@@ -81,7 +81,10 @@ import Footer from "../components/Footer.astro";
         text-decoration: none;
         box-shadow: 0 10px 20px -5px rgba(86, 53, 177, 0.4);
         transition: transform 0.3s ease;
+        position: relative;
+        z-index: 100;
       }
+      
       
       .cta-button:hover {
         transform: translateY(-5px);
@@ -632,18 +635,18 @@ import Footer from "../components/Footer.astro";
     </head>
     <body>
       <!-- Hero Section with 3D Microbiome Visualization -->
-      <section class="hero-section">
+      <section class="hero-section" >
         <div id="microbiome-canvas"></div>
-        <div class="container">
+        <div class="container ">
           <div class="hero-content">
             <h1 class="hero-title">Decodificando o microbioma para potencializar seu negócio</h1>
             <p class="hero-subtitle">Transforme a complexidade do microbioma animal em resultados mensuráveis com nossa tecnologia avançada de sequenciamento e análise de dados.</p>
-            <a href="#microbiome" class="cta-button">Descobrir Como Funciona</a>
+            <a href="#microbiome" id="microbiome-button" class="cta-button">Descobrir Como Funciona</a>
           </div>
         </div>
       </section>
 
-      <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+      <div class="absolute top-0 left-0 w-full h-full overflow-hidden section-padding">
         <div class="absolute top-1/4 left-1/4 w-96 h-96 blob bg-gradient-to-br from-[#3533c9]/10 to-[#0048b5]/10 blur-3xl animate-float-v"></div>
         <div class="absolute bottom-1/4 right-1/4 w-96 h-96 blob bg-gradient-to-br from-[#0048b5]/10 to-[#4c7fcb]/10 blur-3xl animate-float-h"></div>
         <div class="absolute top-1/2 left-1/2 w-64 h-64 blob bg-gradient-to-br from-[#215ec3]/10 to-transparent blur-2xl animate-pulse-grow"></div>
@@ -655,7 +658,7 @@ import Footer from "../components/Footer.astro";
         <source src="/video/dna2.mp4" type="video/mp4" />
       </video>
       <!-- What is Microbiome Section -->
-      <section id="microbiome" class="section microbiome-section">
+      <section id="microbiome" class="section microbiome-section section-padding">
         <div class="microbiome-particles" id="particles"></div>
         <div class="container">
           <div class="text-center mb-12">
@@ -704,7 +707,7 @@ import Footer from "../components/Footer.astro";
       </section>
       
       <!-- ROI Benefits Section -->
-      <section id="benefits" class="section roi-section">
+      <section id="benefits" class="section roi-section section-padding">
         <div class="container">
           <div class="text-center mb-12">
             <h2 class="section-title">Resultados financeiros mensuráveis</h2>
@@ -756,7 +759,7 @@ import Footer from "../components/Footer.astro";
       </section>
       
       <!-- Service Process Section -->
-      <section id="service" class="section service-timeline">
+      <section id="service" class="section service-timeline section-padding">
         <div class="container">
           <div class="text-center mb-12">
             <h2 class="section-title">Nossa jornada de análise</h2>
@@ -851,7 +854,7 @@ import Footer from "../components/Footer.astro";
       </section>
       
       <!-- Fingerprint Section for Input Companies -->
-      <section id="fingerprint" class="section">
+      <section id="fingerprint" class="section section-padding">
         <div class="container">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
@@ -1098,10 +1101,75 @@ import Footer from "../components/Footer.astro";
           `;
           document.head.appendChild(styleSheet);
         });
+
+        // Este script deve ser adicionado no final do seu HTML, antes do fechamento da tag </body>
+document.addEventListener('DOMContentLoaded', function() {
+  // Selecionando especificamente o botão que aponta para #microbiome
+  const microbiomeButton = document.querySelector('a[href="#microbiome"]');
+  
+  if (microbiomeButton) {
+    microbiomeButton.addEventListener('click', function(e) {
+      // Previne o comportamento padrão do link
+      e.preventDefault();
+      
+      // Localiza a seção de destino
+      const microbiomeSection = document.getElementById('microbiome');
+      
+      if (microbiomeSection) {
+        // Calcular a posição da seção, compensando pela altura da navbar
+        // Ajuste o valor 80 para a altura exata da sua navbar
+        const navbarHeight = 80;
+        const sectionPosition = microbiomeSection.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+        
+        // Rolagem suave para a seção
+        window.scrollTo({
+          top: sectionPosition,
+          behavior: 'smooth'
+        });
+        
+        console.log('Rolando para a seção microbiome');
+      } else {
+        console.error('Seção microbiome não encontrada');
+      }
+    });
+    
+    console.log('Event listener adicionado ao botão de microbiome');
+  } else {
+    console.error('Botão para microbiome não encontrado');
+  }
+  
+  // Código de depuração para verificar se a seção está visível
+  function checkSectionVisibility() {
+    const microbiomeSection = document.getElementById('microbiome');
+    if (microbiomeSection) {
+      const rect = microbiomeSection.getBoundingClientRect();
+      const isVisible = (
+        rect.top < window.innerHeight &&
+        rect.bottom > 0
+      );
+      
+      console.log('Seção microbiome:', {
+        top: rect.top,
+        bottom: rect.bottom,
+        isVisible: isVisible,
+        offsetTop: microbiomeSection.offsetTop,
+        pageYOffset: window.pageYOffset
+      });
+    } else {
+      console.error('Seção microbiome não encontrada');
+    }
+  }
+  
+  // Adiciona a função ao objeto window para ser acessível no console
+  window.debugMicrobiome = checkSectionVisibility;
+  
+  // Verificação inicial
+  setTimeout(checkSectionVisibility, 1000);
+});
+
       </script>
     </body>
     </html>
   </div>
-
   <Footer />
 </Layout>

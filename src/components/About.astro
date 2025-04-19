@@ -1,82 +1,89 @@
-<section id="about" class="py-24 px-6 md:px-12 bg-gradient-to-b from-blue-950 to-black relative overflow-hidden">
+<section id="about" class="py-16 px-4 md:py-24 md:px-12 bg-gradient-to-b from-blue-950 to-black relative overflow-hidden">
+  <!-- Background elements - mantidos mas otimizados -->
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-600/20 rounded-full filter blur-3xl"></div>
+    <div class="absolute top-1/2 -right-20 w-60 h-60 bg-blue-800/20 rounded-full filter blur-3xl"></div>
+  </div>
+  
   <div class="container mx-auto max-w-6xl">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <div class="space-y-6">
-        <div class="inline-block px-3 py-1 bg-blue-900/30 backdrop-blur-sm rounded-full border border-blue-400/20 mb-2">
-          <p class="text-blue-300 text-sm font-medium">Sobre a AlphaBioma</p>
+    <!-- Cabeçalho da seção - Ajustado para mobile -->
+    <div class="text-center mb-8 md:mb-12">
+      <div class="inline-block px-3 py-1 bg-blue-900/30 backdrop-blur-sm rounded-full border border-blue-400/20 mb-2">
+        <p class="text-blue-300 text-sm font-medium">Sobre a AlphaBioma</p>
+      </div>
+      
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 md:mb-6">
+        Do campo para a ciência, da ciência para o produtor
+      </h2>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <!-- Conteúdo textual - Reorganizado para mobile -->
+      <div class="space-y-4 md:space-y-6 order-2 md:order-1">
+        <p class="text-base md:text-lg text-gray-300">
+          A AlphaBioma nasceu das mãos e da mente de Sudario Roberto, pesquisador que saiu do campo para a universidade, mas nunca perdeu a conexão com a realidade do produtor. Como Research Graduate Assistant na Universidade de Minnesota, Sudario combina o rigor científico com a experiência prática adquirida tanto no Brasil quanto nos Estados Unidos.
+        </p>
+        
+        <p class="text-base md:text-lg text-gray-300">
+          Ao longo de anos trabalhando diretamente com produção animal, era comum ouvir promessas sobre microbioma — mas quase ninguém conseguia explicar claramente o que ele fazia ou como medir seu impacto real. Foi dessa necessidade de tradução entre ciência e campo que nasceu a AlphaBioma.
+        </p>
+        
+        <div class="bg-gradient-to-r from-blue-900/30 to-blue-800/20 p-4 md:p-6 rounded-xl border-l-4 border-blue-500">
+          <p class="text-white text-sm md:text-base">
+            Nossa jornada também começou atendendo empresas que já possuíam dados valiosos — mas que foram analisados de forma inadequada, com métodos estatísticos pouco informativos. Percebemos que não bastava apenas gerar dados; era preciso transformá-los em conhecimento aplicável.
+          </p>
         </div>
         
-        <h2 class="text-4xl font-bold text-white mb-6">
-          Do campo para a ciência, da ciência para o produtor
-        </h2>
+        <p class="text-base md:text-lg text-gray-300">
+          Mais do que simplesmente dizer que uma bactéria aumentou ou diminuiu, nós revelamos <span class="font-semibold text-blue-300">o que os microrganismos estão realmente fazendo</span> e como isso afeta seus resultados.
+        </p>
         
-        <div class="space-y-4">
-          <p class="text-lg text-gray-300">
-            A AlphaBioma nasceu das mãos e da mente de Sudario Roberto, pesquisador que saiu do campo para a universidade, mas nunca perdeu a conexão com a realidade do produtor. Como Research Graduate Assistant na Universidade de Minnesota, Sudario combina o rigor científico com a experiência prática adquirida tanto no Brasil quanto nos Estados Unidos.
+        <!-- Nossa Abordagem - Simplificada para mobile -->
+        <div class="pt-2 md:pt-4">
+          <h3 class="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-white">Nossa Abordagem:</h3>
+          <ul class="space-y-2 text-gray-300 text-sm md:text-base">
+            <li class="flex items-start gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 text-blue-400 mt-1 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span>Investigamos rotas metabólicas e funções biológicas para entender o impacto real do microbioma.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 text-blue-400 mt-1 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span>Aplicamos métodos estatísticos avançados que vão além do simples "valor p".</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 text-blue-400 mt-1 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span>Transformamos resultados complexos em relatórios claros e aplicáveis.</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Citação de missão - Mais compacta -->
+        <div class="pt-2">
+          <p class="text-base md:text-lg text-blue-200 font-medium italic">
+            "Nossa missão é traduzir dados biológicos em estratégias aplicáveis — com precisão científica e impacto econômico real."
           </p>
-          
-          <p class="text-lg text-gray-300">
-            Ao longo de anos trabalhando diretamente com produção animal, era comum ouvir promessas sobre microbioma — mas quase ninguém conseguia explicar claramente o que ele fazia ou como medir seu impacto real. Foi dessa necessidade de tradução entre ciência e campo que nasceu a AlphaBioma.
+        </div>
+        
+        <!-- Informações do fundador - Simplificada -->
+        <div class="mt-4 md:mt-6 p-4 md:p-6 bg-blue-900/20 rounded-xl">
+          <h3 class="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-white">Quem está por trás da AlphaBioma</h3>
+          <p class="text-gray-300 text-sm md:text-base">
+            Sudario Roberto Silva Junior lidera a AlphaBioma com uma formação única que combina experiência prática e conhecimento científico de ponta. Doutorando em Ciência Animal com foco em nutrição suína e microbioma pela Universidade de Minnesota.
           </p>
-          
-          <div class="bg-gradient-to-r from-blue-900/30 to-blue-800/20 p-6 rounded-xl border-l-4 border-blue-500">
-            <p class="text-white">
-              Nossa jornada também começou atendendo empresas que já possuíam dados valiosos — mas que foram analisados de forma inadequada, com métodos estatísticos pouco informativos. Percebemos que não bastava apenas gerar dados; era preciso transformá-los em conhecimento aplicável que fizesse sentido para quem precisa tomar decisões técnicas no dia a dia.
-            </p>
-          </div>
-          
-          <p class="text-lg text-gray-300">
-            Mais do que simplesmente dizer que uma bactéria aumentou ou diminuiu, nós revelamos <span class="font-semibold text-blue-300">o que os microrganismos estão realmente fazendo</span> e como isso afeta seus resultados. Com expertise em bioinformática, estatística avançada e nutrição animal, conectamos os pontos entre ciência de ponta e resultados práticos.
-          </p>
-          
-          <div class="pt-4">
-            <h3 class="text-xl font-semibold mb-3 text-white">Nossa Abordagem:</h3>
-            <ul class="space-y-2 text-gray-300">
-              <li class="flex items-start gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Investigamos rotas metabólicas, enzimas ativas e funções biológicas para entender como o microbioma realmente impacta a produtividade.</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Aplicamos métodos estatísticos avançados que vão além do simples "valor p", revelando o verdadeiro significado prático dos seus dados.</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Transformamos resultados complexos em relatórios claros e aplicáveis que fazem sentido para quem está no campo.</span>
-              </li>
-            </ul>
-          </div>
-          
-          <div class="pt-2">
-            <p class="text-lg text-blue-200 font-medium italic">
-              "Nossa missão é traduzir dados biológicos em estratégias aplicáveis — com precisão científica, visualização acessível e impacto econômico real."
-            </p>
-          </div>
-          
-          <div class="bg-blue-900/20 p-6 rounded-xl mt-6">
-            <h3 class="text-xl font-semibold mb-3 text-white">Quem está por trás da AlphaBioma</h3>
-            <p class="text-gray-300">
-              Sudario Roberto Silva Junior lidera a AlphaBioma com uma formação única que combina experiência prática e conhecimento científico de ponta. Doutorando em Ciência Animal com foco em nutrição suína e microbioma pela Universidade de Minnesota, também possui Mestrado pela mesma instituição e Bacharelado em Zootecnia pela Universidade Federal de Lavras, Brasil.
-            </p>
-            <p class="text-gray-300 mt-3">
-              Com experiência em empresas como The Maschhoffs e LB Pork Inc., Sudario contribuiu para pesquisas pioneiras aplicando métodos avançados de bioinformática e análise de dados para entender o microbioma animal e seu impacto na produtividade. Seu trabalho com a integração de múltiplos conjuntos de dados (abordagem DIABLO) e meta-análises do microbioma core em suínos trouxe insights valiosos para a indústria.
-            </p>
-          </div>
         </div>
       </div>
 
-      <div class="relative">
-        <img src="/api/placeholder/600/700" alt="Imagem representativa da AlphaBioma" class="rounded-xl shadow-2xl relative z-10" />
-        
-        <!-- Decorative elements -->
-        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-600/20 rounded-full filter blur-3xl"></div>
-        <div class="absolute top-1/2 -right-20 w-60 h-60 bg-blue-800/20 rounded-full filter blur-3xl"></div>
+      <!-- Imagem do fundador - Ajustada para telas pequenas -->
+      <div class="relative mb-8 md:mb-0 order-1 md:order-2">
+        <img src="../../public/assets/images/sudario.jpeg"" alt="Sudario Roberto, fundador da AlphaBioma" 
+             class="rounded-xl shadow-2xl relative z-10 mx-auto max-w-full h-auto"
+             onerror="this.src='/assets/images/sudario-placeholder.jpg'" />
       </div>
     </div>
   </div>
