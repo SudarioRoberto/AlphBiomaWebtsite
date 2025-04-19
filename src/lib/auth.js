@@ -1,5 +1,7 @@
 // src/lib/auth.js
 import bcrypt from 'bcryptjs';
+import { getAuthorizationUrl } from '../../../lib/linkedin.js';
+
 
 /**
  * Gera um hash seguro para uma senha

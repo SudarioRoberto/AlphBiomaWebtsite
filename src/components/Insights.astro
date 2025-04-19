@@ -1,38 +1,97 @@
+---
+// src/components/Insights.astro
+// Versão atualizada para buscar posts do blog e exibi-los na seção de Insights
+
+// No topo do arquivo, adicione o seguinte código para importar os posts do blog:
+
+const posts = await Astro.glob('../pages/blog/*.mdx');
+const recentPosts = posts
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
+  .slice(0, 3); // Pegando os 3 posts mais recentes
+---
+
 <section id="insights" class="py-24 px-6 md:px-12 bg-gradient-to-b from-blue-950 to-black relative overflow-hidden">
-    <div class="max-w-6xl mx-auto text-center space-y-12">
-      <h2 class="text-4xl font-extrabold">Novos insights</h2>
-      <p class="text-lg text-gray-300">O que estamos aprendendo e compartilhando sobre microbiota e dados na produção animal</p>
-  
-      <div class="grid md:grid-cols-2 gap-10 mt-10 text-left">
-        
-        <!-- Insight 1 -->
-        <div class="bg-white/5 p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex flex-col items-start">
+  <div class="max-w-6xl mx-auto text-center space-y-12">
+    <h2 class="text-4xl font-extrabold">Novos insights</h2>
+    <p class="text-lg text-gray-300">O que estamos aprendendo e compartilhando sobre microbiota e dados na produção animal</p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mt-10 text-left">
+      
+      {recentPosts.length > 0 ? (
+        recentPosts.map((post) => (
+          <div class="bg-white/5 p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex flex-col items-start">
+            <img 
+              src={post.frontmatter.image} 
+              alt={post.frontmatter.title} 
+              class="w-full aspect-video object-cover rounded-lg mb-5 border border-white/10"
+            />       
+            <span class="text-sm text-blue-400">{post.frontmatter.category}</span>
+            <h3 class="text-xl font-semibold mt-2 mb-2">{post.frontmatter.title}</h3>
+            <p class="text-sm text-gray-300">{post.frontmatter.excerpt}</p>
+            <a 
+              href={post.url} 
+              class="mt-4 text-blue-400 hover:text-blue-200 text-sm font-medium"
+            >
+              Leia mais →
+            </a>
+          </div>
+        ))
+      ) : (
+        <>
+          <!-- Insight 1 - Conteúdo estático como fallback se não houver posts do blog -->
+          <div class="bg-white/5 p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex flex-col items-start">
             <img src="/assets/insights/prebiotic.png" 
-            alt="Imagem sobre fibras e prebióticos" 
-            class="w-full aspect-video object-contain rounded-lg mb-5 border border-white/10">       
-          <span class="text-sm text-blue-400">Microbiota</span>
-          <h3 class="text-xl font-semibold mt-2 mb-2">Ainda chamando qualquer fibra de prebiótico? Tá na hora de parar</h3>
-          <p class="text-sm text-gray-300">Nem toda fibra é um prebiótico. A gente precisa olhar além da fermentação e entender a função microbiana no contexto da saúde animal.</p>
-          <a href="https://www.linkedin.com/pulse/ainda-chamando-qualquer-fibra-de-prebi%C3%B3tico-t%C3%A1-na-hora-parar-ep4kc/"
-             class="mt-4 text-blue-400 hover:text-blue-200 text-sm font-medium" target="_blank" rel="noopener noreferrer">
-            Leia mais no LinkedIn →
-          </a>
-        </div>
-  
-        <!-- Insight 2 -->
-        <div class="bg-white/5 p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex flex-col items-start">
-          <img src="/assets/insights/pvalue.gif" alt="Gráfico explicando value p"
-          class="w-full aspect-video object-contain rounded-lg mb-5 border border-white/10"> 
-          <span class="text-sm text-blue-400">Ciência de Dados Aplicada</span>
-          <h3 class="text-xl font-semibold mt-2 mb-2">O segredo atrás do value p?</h3>
-          <p class="text-sm text-gray-300">Não é só sobre a dieta — às vezes, o que realmente define se o resultado vai ser significativo é o tamanho da amostra, o efeito observado e como você interpreta o valor de P.</p>
-          <a href="https://www.linkedin.com/posts/sudarioroberto_swine-swinenutriton-statistics-activity-7241144686604644352-asVr"
-             class="mt-4 text-blue-400 hover:text-blue-200 text-sm font-medium" target="_blank" rel="noopener noreferrer">
-            Leia mais no LinkedIn →
-          </a>
-        </div>
-  
-      </div>
+              alt="Imagem sobre fibras e prebióticos" 
+              class="w-full aspect-video object-contain rounded-lg mb-5 border border-white/10" />       
+            <span class="text-sm text-blue-400">Microbiota</span>
+            <h3 class="text-xl font-semibold mt-2 mb-2">Ainda chamando qualquer fibra de prebiótico? Tá na hora de parar</h3>
+            <p class="text-sm text-gray-300">Nem toda fibra é um prebiótico. A gente precisa olhar além da fermentação e entender a função microbiana no contexto da saúde animal.</p>
+            <a href="https://www.linkedin.com/pulse/ainda-chamando-qualquer-fibra-de-prebi%C3%B3tico-t%C3%A1-na-hora-parar-ep4kc/"
+                class="mt-4 text-blue-400 hover:text-blue-200 text-sm font-medium" target="_blank" rel="noopener noreferrer">
+              Leia mais no LinkedIn →
+            </a>
+          </div>
+
+          <!-- Insight 2 -->
+          <div class="bg-white/5 p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex flex-col items-start">
+            <img src="/assets/insights/pvalue.gif" alt="Gráfico explicando value p"
+            class="w-full aspect-video object-contain rounded-lg mb-5 border border-white/10"> 
+            <span class="text-sm text-blue-400">Ciência de Dados Aplicada</span>
+            <h3 class="text-xl font-semibold mt-2 mb-2">O segredo atrás do value p?</h3>
+            <p class="text-sm text-gray-300">Não é só sobre a dieta — às vezes, o que realmente define se o resultado vai ser significativo é o tamanho da amostra, o efeito observado e como você interpreta o valor de P.</p>
+            <a href="https://www.linkedin.com/posts/sudarioroberto_swine-swinenutriton-statistics-activity-7241144686604644352-asVr"
+               class="mt-4 text-blue-400 hover:text-blue-200 text-sm font-medium" target="_blank" rel="noopener noreferrer">
+              Leia mais no LinkedIn →
+            </a>
+          </div>
+          
+          <!-- Insight 3 -->
+          <div class="bg-white/5 p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex flex-col items-start">
+            <img src="/assets/insights/microbiome-data.jpg" alt="Análise de dados do microbioma"
+            class="w-full aspect-video object-contain rounded-lg mb-5 border border-white/10"> 
+            <span class="text-sm text-blue-400">Bioinformática</span>
+            <h3 class="text-xl font-semibold mt-2 mb-2">Extraindo significado de dados do microbioma</h3>
+            <p class="text-sm text-gray-300">Como transformar sequências de DNA em decisões práticas para nutrição animal e manejo sanitário através de análises bioinformáticas avançadas.</p>
+            <a href="/blog"
+               class="mt-4 text-blue-400 hover:text-blue-200 text-sm font-medium">
+              Leia mais no Blog →
+            </a>
+          </div>
+        </>
+      )}
     </div>
-  </section>
-  
+    
+    <!-- Botão para ver mais posts -->
+    <div class="mt-12">
+      <a 
+        href="/blog" 
+        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-lg shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-300"
+      >
+        <span class="font-semibold">Ver todos os insights</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

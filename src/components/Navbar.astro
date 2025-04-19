@@ -34,6 +34,7 @@
         </div>
         <a href="/#about" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Sobre Nós</a>
         <a href="/#insights" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Insights</a>
+        <a href="/blog" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Blog</a>
         <a href="/perguntas" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">FAQ</a>
         <a href="/aplicativos" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Aplicativo</a>
       </div>
@@ -82,6 +83,7 @@
       </div>   
       <a href="/#about" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Sobre Nós</a>
       <a href="/#insights" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Insights</a>
+      <a href="/blog" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Blog</a>
       <a href="/perguntas" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">FAQ</a>
       <a href="/aplicativos" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">AlphaBioma App</a> 
       <a href="/admin/login" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Portal do Cliente</a>
@@ -96,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenuButton = document.getElementById('mobileMenuButton');
   const mobileMenu = document.getElementById('mobileMenu');
   const navbar = document.getElementById('main-nav');
+  const { variant = "default" } = Astro.props;
+  const isDark = variant === "dark";
   
   // Controle do menu móvel
   if (mobileMenuButton && mobileMenu) {

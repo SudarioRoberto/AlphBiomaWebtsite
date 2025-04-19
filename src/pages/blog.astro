@@ -1,0 +1,150 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+// Recupera todos os posts do blog ordenados por data (mais recente primeiro)
+const posts = await Astro.glob('./blog/*.mdx');
+const sortedPosts = posts.sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+---
+
+<Layout title="Blog | AlphaBioma - Dados que guiam, ciência que entrega">
+    <Navbar variant="dark" />
+  
+  <main class="min-h-screen pt-32 pb-20 bg-white text-gray-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Cabeçalho da seção -->
+      <div class="text-center mb-16 relative">
+        <div class="absolute inset-0 flex items-center justify-center -z-10 opacity-5">
+          <img src="/assets/logos/logo.png" alt="" class="w-96 h-96 object-contain" />
+        </div>
+        
+        <h1 class="text-4xl md:text-5xl font-bold text-[#0048b5] mb-4">Blog AlphaBioma</h1>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          Insights, pesquisas e conhecimento aplicado sobre microbiota e dados para a produção animal
+        </p>
+      </div>
+      
+      <!-- Filtros e busca (podem ser implementados futuramente) -->
+      <div class="flex justify-between items-center mb-10 flex-wrap gap-4">
+        <div class="flex space-x-2">
+          <button class="px-4 py-2 bg-[#0048b5] text-white rounded-full text-sm font-medium hover:bg-[#3533c9] transition-colors">
+            Todos
+          </button>
+          <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">
+            Microbiota
+          </button>
+          <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">
+            Dados
+          </button>
+          <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">
+            Pesquisa
+          </button>
+        </div>
+        
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Buscar no blog..."
+            class="pl-10 pr-4 py-2 border border-gray-300 rounded-full w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-[#0048b5] focus:border-transparent"
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Lista de posts -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {sortedPosts.map((post) => (
+          <a href={post.url} class="group">
+            <article class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+              <div class="relative">
+                <img 
+                  src={post.frontmatter.image} 
+                  alt={post.frontmatter.title}
+                  class="w-full aspect-video object-cover group-hover:opacity-90 transition-opacity"
+                />
+                <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-[rgba(0,0,0,0.7)] to-transparent">
+                  <span class="inline-block px-3 py-1 bg-[#0048b5] text-white text-xs font-medium rounded-full mb-2">
+                    {post.frontmatter.category}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="p-6 flex-1 flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-[#0048b5] transition-colors">
+                  {post.frontmatter.title}
+                </h2>
+                
+                <p class="text-gray-600 text-sm mb-4 flex-1">
+                  {post.frontmatter.excerpt}
+                </p>
+                
+                <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                  <div class="flex items-center space-x-2">
+                    <img 
+                      src={post.frontmatter.authorImage || "/assets/images/sudario.jpeg"} 
+                      alt={post.frontmatter.author}
+                      class="w-8 h-8 rounded-full object-cover"
+                    />
+                    <span class="text-sm text-gray-700">{post.frontmatter.author}</span>
+                  </div>
+                  
+                  <span class="text-xs text-gray-500">
+                    {new Date(post.frontmatter.date).toLocaleDateString('pt-BR', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+            </article>
+          </a>
+        ))}
+      </div>
+      
+      <!-- Se não houver posts -->
+      {sortedPosts.length === 0 && (
+        <div class="text-center py-20">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-2">Nenhum artigo publicado ainda</h3>
+          <p class="text-gray-600">Em breve compartilharemos nossos insights e conhecimentos aqui.</p>
+        </div>
+      )}
+      
+      <!-- Inscrição para newsletter (opcional) -->
+      <div class="mt-20 bg-gradient-to-r from-blue-900 to-[#0048b5] rounded-2xl p-8 text-white">
+        <div class="max-w-3xl mx-auto text-center">
+          <h3 class="text-2xl font-bold mb-4">Receba nossos insights diretamente no seu email</h3>
+          <p class="mb-6 text-blue-100">Cadastre-se para receber as atualizações mais recentes sobre microbiota, análise de dados e inovações para produção animal.</p>
+          
+          <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Seu melhor email"
+              class="flex-1 px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+            <button
+              type="submit"
+              class="px-6 py-3 bg-white text-[#0048b5] font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              Inscrever-se
+            </button>
+          </form>
+          
+          <p class="mt-4 text-xs text-blue-200">
+            Ao se inscrever, você concorda em receber emails da AlphaBioma. Respeitamos sua privacidade e você pode cancelar sua inscrição a qualquer momento.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<style>
+/* Adicione estilos personalizados aqui se necessário */
+</style>

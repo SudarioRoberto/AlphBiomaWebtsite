@@ -1,0 +1,265 @@
+---
+// src/pages/admin/linkedin.astro
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+
+// Verificar status LinkedIn
+const isConnected = Astro.cookies.has('linkedin_token');
+const linkedinName = Astro.cookies.get('linkedin_name')?.value || '';
+
+// Buscar posts
+const posts = await Astro.glob('../blog/*.mdx');
+const sortedPosts = posts.sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+// Verificar parâmetros URL
+const url = new URL(Astro.request.url);
+const success = url.searchParams.get('success');
+const error = url.searchParams.get('error');
+---
+
+<Layout title="Compartilhar no LinkedIn | AlphaBioma">
+  <Navbar />
+  
+  <main class="pt-32 pb-20 min-h-screen bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <h1 class="text-3xl font-bold text-[#0048b5] mb-8">Compartilhar no LinkedIn</h1>
+      
+      <!-- Mensagens de status -->
+      {success && (
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6">
+          <p>Conectado com sucesso ao LinkedIn!</p>
+        </div>
+      )}
+      
+      {error && (
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+          <p>Erro: {error}</p>
+        </div>
+      )}
+      
+      <!-- Status da conexão -->
+      <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h2 class="text-xl font-semibold mb-4">Status da Conexão</h2>
+        
+        {isConnected ? (
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0072b1]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </div>
+            
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">Conectado ao LinkedIn</h3>
+              {linkedinName && <p class="text-gray-600">Conta: {linkedinName}</p>}
+              
+              <div class="mt-4">
+                <a 
+                  href="/api/linkedin/disconnect" 
+                  class="inline-flex items-center px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition"
+                >
+                  Desconectar
+                </a>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">Não conectado ao LinkedIn</h3>
+              <p class="text-gray-600 mb-4">Conecte sua conta do LinkedIn para compartilhar posts do blog.</p>
+              
+              <a 
+                href="/api/linkedin/auth" 
+                class="inline-flex items-center px-4 py-2 bg-[#0072b1] text-white rounded-md hover:bg-[#005e93] transition"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                Conectar com LinkedIn
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <!-- Compartilhamento manual de posts -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Compartilhar Post no LinkedIn</h2>
+        
+        <form id="shareForm" class="space-y-4">
+          <div>
+            <label for="postSelect" class="block text-sm font-medium text-gray-700 mb-1">Selecione um post</label>
+            <select 
+              id="postSelect" 
+              class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
+            >
+              <option value="">Selecione um post para compartilhar...</option>
+              {sortedPosts.map((post) => (
+                <option value={post.url.replace('/blog/', '')}>{post.frontmatter.title}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label for="customMessage" class="block text-sm font-medium text-gray-700 mb-1">Mensagem personalizada (opcional)</label>
+            <textarea 
+              id="customMessage" 
+              class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              rows="3"
+              placeholder="Novo post no Blog AlphaBioma: [título do post]"
+            ></textarea>
+          </div>
+          
+          <div>
+            <button 
+              type="submit" 
+              class="inline-flex items-center px-4 py-2 bg-[#0072b1] text-white rounded-md hover:bg-[#005e93] focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!isConnected}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              Compartilhar no LinkedIn
+            </button>
+          </div>
+        </form>
+        
+        <div id="shareStatus" class="mt-4 hidden"></div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const shareForm = document.getElementById('shareForm');
+    const shareStatus = document.getElementById('shareStatus');
+    
+    if (shareForm) {
+      shareForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const postSelect = document.getElementById('postSelect');
+        const customMessage = document.getElementById('customMessage');
+        const submitButton = shareForm.querySelector('button[type="submit"]');
+        
+        const postId = postSelect.value;
+        if (!postId) {
+          alert('Por favor, selecione um post para compartilhar');
+          return;
+        }
+        
+        try {
+          // Desabilitar botão e mostrar loading
+          submitButton.disabled = true;
+          submitButton.innerHTML = `
+            <svg class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Compartilhando...
+          `;
+          
+          // Obter informações do post selecionado
+          const postTitle = postSelect.options[postSelect.selectedIndex].text;
+          const postUrl = `${window.location.origin}/blog/${postId}`;
+          
+          // Enviar solicitação para compartilhar
+          const response = await fetch('/api/linkedin/share', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title: postTitle,
+              url: postUrl,
+              text: customMessage.value || `Novo post no Blog AlphaBioma: ${postTitle}`
+            })
+          });
+          
+          const result = await response.json();
+          
+          // Restaurar botão
+          submitButton.disabled = false;
+          submitButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            Compartilhar no LinkedIn
+          `;
+          
+          // Exibir status
+          shareStatus.classList.remove('hidden');
+          
+          if (result.success) {
+            shareStatus.className = "mt-4 p-4 bg-green-100 text-green-700 rounded-md";
+            shareStatus.innerHTML = `
+              <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>${result.message}</span>
+              </div>
+            `;
+            
+            // Limpar campos
+            customMessage.value = '';
+            postSelect.selectedIndex = 0;
+          } else {
+            shareStatus.className = "mt-4 p-4 bg-red-100 text-red-700 rounded-md";
+            shareStatus.innerHTML = `
+              <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Erro: ${result.error}</span>
+              </div>
+            `;
+          }
+          
+          // Esconder status após 5 segundos se for sucesso
+          if (result.success) {
+            setTimeout(() => {
+              shareStatus.classList.add('hidden');
+            }, 5000);
+          }
+        } catch (error) {
+          console.error('Erro:', error);
+          
+          // Restaurar botão
+          submitButton.disabled = false;
+          submitButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            Compartilhar no LinkedIn
+          `;
+          
+          // Exibir erro
+          shareStatus.classList.remove('hidden');
+          shareStatus.className = "mt-4 p-4 bg-red-100 text-red-700 rounded-md";
+          shareStatus.innerHTML = `
+            <div class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Erro ao compartilhar. Tente novamente.</span>
+            </div>
+          `;
+        }
+      });
+    }
+  });
+</script>
