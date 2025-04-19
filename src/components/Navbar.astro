@@ -1,10 +1,11 @@
 ---
 // src/components/Navbar.astro
 ---
+---
 
 <nav id="main-nav" class="w-full px-6 md:px-20 py-4 fixed top-0 left-0 z-50 backdrop-blur-md bg-black/30 border-b border-white/10 shadow-md transition-all duration-300">
   <div class="flex justify-between items-center">
-    <a href="#hero" class="text-2x1 font-bold text-white tracking-wide flex items-center gap-3">
+    <a href="/#hero" class="text-2x1 font-bold text-white tracking-wide flex items-center gap-3">
       <img src="/assets/logos/logo.png" alt="AlphaBioma Logo" class="h-20 w-auto" />
       <div class="flex flex-col leading-tight">
         <span class="text-xl font-bold text-white">AlphaBioma</span>
@@ -15,14 +16,29 @@
     <!-- Menu para desktop -->
     <div class="hidden md:flex gap-8">
       <div class="flex gap-6 text-white items-center">
-        <a href="/#services" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Serviços</a>
-        <a href="/#benefits" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Benefícios</a>
+        <div class="relative dropdown-container">
+          <button class="dropdown-button flex items-center gap-1 text-sm font-medium hover:text-blue-300 transition-colors relative">
+            Serviços
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="dropdown-menu absolute left-0 mt-2 bg-black/80 backdrop-blur-md border border-blue-500/30 rounded-lg shadow-xl opacity-0 invisible transform -translate-y-2 transition-all duration-300 w-56">
+            <a href="/microbioma" class="block px-6 py-3 text-sm text-white hover:bg-blue-900/40 first:rounded-t-lg transition-colors">
+              <div class="font-large">Microbioma</div>
+            </a>
+            <a href="/dados" class="block px-6 py-3 text-sm text-white hover:bg-blue-900/40 last:rounded-b-lg transition-colors">
+              <div class="font-medium">Análise de Dados</div>
+            </a>
+          </div>
+        </div>
         <a href="/#about" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Sobre Nós</a>
         <a href="/#insights" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Insights</a>
+        <a href="/aplicativos" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Aplicativo</a>
       </div>
       
       <a 
-        href="#contact" 
+        href="/#Contact" 
         class="px-4 py-2 bg-gradient-to-r from-blue-700 to-blue-500 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-blue-600/20 transform hover:-translate-y-1 transition-all duration-300"
       >
         Fale Conosco
@@ -45,9 +61,27 @@
   </div>
   
   <!-- Menu móvel (oculto por padrão) -->
-  <div id="mobileMenu" class="md:hidden hidden bg-black/90 mt-4 rounded-lg p-4 animate-fade-in">
+  <div id="mobileMenu" class="md:hidden hidden bg-black/90 backdrop-blur-md mt-4 rounded-lg p-4 animate-fade-in border border-blue-500/20 shadow-lg">
     <div class="flex flex-col gap-4">
-      <a href="#services" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Serviços</a>
+      <div class="mobile-dropdown">
+        <button class="mobile-dropdown-button flex items-center justify-between w-full text-white py-2 border-b border-blue-800/50">
+          Serviços
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="mobile-dropdown-content hidden pl-4 border-l border-blue-800/50 ml-2 mt-2">
+          <a href="/servicos/microbioma" class="text-white hover:text-blue-300 py-2 flex flex-col">
+            <span>Microbioma</span>
+            <span class="text-xs text-blue-200">Análise avançada do microbioma</span>
+          </a>
+          <a href="/servicos/analise-de-dados" class="text-white hover:text-blue-300 py-2 flex flex-col">
+            <span>Análise de Dados</span>
+            <span class="text-xs text-blue-200">Soluções em bioinformática</span>
+          </a>
+        </div>
+      </div>
+      <a href="/app" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">AlphaBioma App</a>      
       <a href="#benefits" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Benefícios</a>
       <a href="#about" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Sobre Nós</a>
       <a href="#insights" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Insights</a>
@@ -64,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenu = document.getElementById('mobileMenu');
   const navbar = document.getElementById('main-nav');
   
+  // Controle do menu móvel
   if (mobileMenuButton && mobileMenu) {
     mobileMenuButton.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
@@ -78,6 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  // Dropdown no mobile
+  const mobileDropdownButtons = document.querySelectorAll('.mobile-dropdown-button');
+  mobileDropdownButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const content = button.nextElementSibling;
+      content.classList.toggle('hidden');
+      button.querySelector('svg').classList.toggle('rotate-180');
+    });
+  });
+  
   // Adicionar classe ao scroll
   window.addEventListener('scroll', () => {
     if (window.scrollY > 100) {
@@ -87,6 +132,39 @@ document.addEventListener('DOMContentLoaded', () => {
       navbar.classList.add('bg-black/30', 'py-4');
       navbar.classList.remove('bg-black/60', 'py-3');
     }
+  });
+  
+  // Gestão dos dropdowns desktop com delay
+  const dropdownContainers = document.querySelectorAll('.dropdown-container');
+  
+  dropdownContainers.forEach(container => {
+    let timeout;
+    const menu = container.querySelector('.dropdown-menu');
+    const button = container.querySelector('.dropdown-button');
+    
+    // Exibir o menu
+    container.addEventListener('mouseenter', () => {
+      clearTimeout(timeout);
+      
+      // Rotacionar a seta
+      container.querySelector('svg').classList.add('rotate-180');
+      
+      // Exibir menu com animação
+      menu.classList.remove('opacity-0', 'invisible', '-translate-y-2');
+      menu.classList.add('opacity-100', 'visible', 'translate-y-0');
+    });
+    
+    // Ocultar o menu com delay
+    container.addEventListener('mouseleave', () => {
+      // Rotacionar a seta de volta
+      container.querySelector('svg').classList.remove('rotate-180');
+      
+      // Atraso para fechar o menu (500ms = 0.5 segundos)
+      timeout = setTimeout(() => {
+        menu.classList.remove('opacity-100', 'visible', 'translate-y-0');
+        menu.classList.add('opacity-0', 'invisible', '-translate-y-2');
+      }, 500);
+    });
   });
 });
 </script>
