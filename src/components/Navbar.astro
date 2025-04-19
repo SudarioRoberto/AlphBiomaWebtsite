@@ -1,9 +1,9 @@
 ---
 // src/components/Navbar.astro
----
+const { variant = "default" } = Astro.props;
 ---
 
-<nav id="main-nav" class="w-full px-4 md:px-20 py-4 fixed top-0 left-0 z-50 backdrop-blur-md bg-black/30 border-b border-white/10 shadow-md transition-all duration-300">
+<nav id="main-nav" class={`w-full px-4 md:px-20 py-4 fixed top-0 left-0 z-50 backdrop-blur-md ${variant === "dark" ? "bg-blue-950" : "bg-black-900"} border-b border-white/10 shadow-md transition-all duration-300`}>
   <div class="flex justify-between items-center">
     <a href="/#hero" class="text-2x1 font-bold text-white tracking-wide flex items-center gap-3">
       <img src="/assets/logos/logo.png" alt="AlphaBioma Logo" class="h-12 md:h-20 w-auto" />
@@ -35,7 +35,6 @@
         <a href="/#about" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Sobre Nós</a>
         <a href="/#insights" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Insights</a>
         <a href="/blog" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Blog</a>
-        <a href="/perguntas" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">FAQ</a>
         <a href="/aplicativos" class="text-sm font-medium hover:text-blue-300 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all hover:after:w-full">Aplicativo</a>
       </div>
       
@@ -83,9 +82,8 @@
       </div>   
       <a href="/#about" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Sobre Nós</a>
       <a href="/#insights" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Insights</a>
-      <a href="/blog" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Blog</a>
-      <a href="/perguntas" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">FAQ</a>
-      <a href="/aplicativos" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">AlphaBioma App</a> 
+      <a href="/blog" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Blog</a> 
+      <a href="/aplicativo" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">AlphaBioma App</a> 
       <a href="/admin/login" class="text-white hover:text-blue-300 py-2 border-b border-blue-800/50">Portal do Cliente</a>
       <a href="/#contact" class="text-white hover:text-blue-300 py-2 px-4 bg-gradient-to-r from-blue-700 to-blue-500 rounded-lg text-center mt-2">Fale Conosco</a>
     </div>
@@ -98,8 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenuButton = document.getElementById('mobileMenuButton');
   const mobileMenu = document.getElementById('mobileMenu');
   const navbar = document.getElementById('main-nav');
-  const { variant = "default" } = Astro.props;
-  const isDark = variant === "dark";
   
   // Controle do menu móvel
   if (mobileMenuButton && mobileMenu) {

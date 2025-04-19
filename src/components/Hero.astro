@@ -83,7 +83,7 @@
   </style>
 </head>
 <body class="bg-black text-white">
-  <body class="bg-black text-white">
+  <body class="bg-blue text-white">
     <section id="hero" class="relative min-h-screen overflow-hidden bg-hero-pattern px-4 md:px-6 section-padding">
       <!-- Animated Background Elements -->
       <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
@@ -91,20 +91,13 @@
         <div class="absolute bottom-1/4 right-1/4 w-96 h-96 blob bg-gradient-to-br from-[#0048b5]/10 to-[#4c7fcb]/10 blur-3xl animate-float-h"></div>
         <div class="absolute top-1/2 left-1/2 w-64 h-64 blob bg-gradient-to-br from-[#215ec3]/10 to-transparent blur-2xl animate-pulse-grow"></div>
       </div>
-      
-      <!-- DNA Animation Overlay -->
-      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/50 via-transparent to-black/50 z-10"></div>
-  
+
+
       <!-- Video with Fallback Poster -->
-      <video autoplay muted loop playsinline poster="assets/images/about-livestock.png" class="absolute top-0 left-0 w-full h-full object-cover opacity-30">
+      <video autoplay muted loop playsinline class="absolute top-0 left-0 w-full h-full object-cover opacity-50">
         <source src="/video/dna.mp4" type="video/mp4" />
       </video>
-
-      <video autoplay muted loop playsinline preload="auto" controlslist="nodownload nofullscreen noremoteplayback"
-  poster="assets/images/about-livestock.png"
-  class="absolute top-0 left-0 w-full h-full object-cover opacity-0 pointer-events-none">
-  <source src="/video/dna.mp4" type="video/mp4" />
-</video>
+      <div class="absolute top-0 left-0 w-full h-full bg-blue-900 opacity-40 z-10"></div>
     
     <!-- Main Content -->
     <div class="container mx-auto px-6 relative z-20 flex flex-col items-center justify-center min-h-screen pt-1 md:pt-1">
